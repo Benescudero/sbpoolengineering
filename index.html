@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SB Pool Engineering - Professional Pool Solutions</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>SB Pool Engineering</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#product" class="nav-link">Product</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Professional Pool Engineering Solutions</h1>
+                <p class="hero-subtitle">Advanced pool maintenance and engineering products designed for professionals and pool owners who demand excellence.</p>
+                <div class="hero-buttons">
+                    <a href="#product" class="btn btn-primary">View Our Product</a>
+                    <a href="#about" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-placeholder">
+                    <i class="fas fa-swimming-pool"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Section -->
+    <section id="product" class="product-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Featured Product</h2>
+                <p>Professional-grade pool engineering solution</p>
+            </div>
+            
+            <div class="product-card" onclick="openProductModal()">
+                <div class="product-image">
+                    <div class="product-placeholder">
+                        <i class="fas fa-cog"></i>
+                        <p>Click to view product details</p>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3>Professional Pool Engineering Device</h3>
+                    <p class="product-description">Advanced pool maintenance and monitoring solution designed for professional use.</p>
+                    <div class="product-price">
+                        <span class="price">$199.00</span>
+                        <span class="shipping-note">+ Shipping & PayPal Fees</span>
+                    </div>
+                    <button class="btn btn-primary product-btn">View Details & Purchase</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About SB Pool Engineering</h2>
+                    <p>We specialize in providing professional-grade pool engineering solutions. Our products are designed with precision and built to last, ensuring optimal performance for both residential and commercial pool applications.</p>
+                    <p>With years of experience in the pool industry, we understand the unique challenges faced by pool professionals and owners. Our solutions are engineered to address these challenges with innovative technology and reliable performance.</p>
+                </div>
+                <div class="about-features">
+                    <div class="feature">
+                        <i class="fas fa-tools"></i>
+                        <h3>Professional Grade</h3>
+                        <p>Built for professionals who demand reliability</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-shipping-fast"></i>
+                        <h3>Fast Shipping</h3>
+                        <p>Quick delivery from Orlando, Florida</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Quality Guaranteed</h3>
+                        <p>Backed by our commitment to excellence</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contact Us</h2>
+                <p>Get in touch with our team</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Location</h3>
+                            <p>Orlando, Florida</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>info@sbpoolengineering.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>Phone</h3>
+                            <p>(555) 123-4567</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>SB Pool Engineering</h3>
+                    <p>Professional Pool Solutions</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#home">Home</a>
+                    <a href="#product">Product</a>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SB Pool Engineering. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeProductModal()">&times;</span>
+            <div class="modal-body">
+                <div class="product-gallery">
+                    <div class="main-image">
+                        <img id="mainProductImage" src="" alt="Product Image">
+                    </div>
+                    <div class="thumbnail-gallery">
+                        <!-- Thumbnails will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="product-details">
+                    <h2>Professional Pool Engineering Device</h2>
+                    <p class="product-description">
+                        Our flagship product is a professional-grade pool engineering device designed for optimal pool maintenance and monitoring. 
+                        This compact, football-sized device weighs only a couple of pounds, making it easy to handle and install.
+                    </p>
+                    <div class="product-specs">
+                        <h3>Specifications:</h3>
+                        <ul>
+                            <li>Size: Approximately football-sized</li>
+                            <li>Weight: ~2 pounds</li>
+                            <li>Professional-grade construction</li>
+                            <li>Easy installation and maintenance</li>
+                            <li>Compatible with most pool systems</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-section">
+                        <div class="price-breakdown">
+                            <div class="price-item">
+                                <span>Product Price:</span>
+                                <span>$199.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>PayPal Fee (3.49%):</span>
+                                <span id="paypalFee">$6.95</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Estimated Shipping:</span>
+                                <span id="shippingCost">Calculating...</span>
+                            </div>
+                            <div class="price-item total">
+                                <span>Total:</span>
+                                <span id="totalPrice">$205.95</span>
+                            </div>
+                        </div>
+                        <div class="shipping-calculator">
+                            <h4>Calculate Your Shipping</h4>
+                            <div class="form-group">
+                                <label for="zipCode">ZIP Code:</label>
+                                <input type="text" id="zipCode" placeholder="Enter your ZIP code" maxlength="5">
+                                <button onclick="calculateShipping()" class="btn btn-secondary">Calculate</button>
+                            </div>
+                        </div>
+                        <div class="paypal-button-container">
+                            <div id="paypal-button-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    <script src="script.js"></script>
+</body>
+</html>
