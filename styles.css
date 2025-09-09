@@ -42,6 +42,18 @@ body {
     height: 70px;
 }
 
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-image {
+    height: 50px;
+    width: auto;
+    filter: drop-shadow(0 2px 8px rgba(30, 58, 138, 0.3));
+}
+
 .nav-logo h2 {
     color: #1e3a8a;
     font-weight: 700;
@@ -181,6 +193,28 @@ body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
+.hero-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.hero-logo-image {
+    height: 120px;
+    width: auto;
+    filter: drop-shadow(0 4px 20px rgba(255, 255, 255, 0.3));
+    animation: logoGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+    0% {
+        filter: drop-shadow(0 4px 20px rgba(255, 255, 255, 0.3));
+    }
+    100% {
+        filter: drop-shadow(0 4px 30px rgba(255, 255, 255, 0.5));
+    }
+}
+
 .hero-placeholder i {
     font-size: 4rem;
     margin-bottom: 1rem;
@@ -288,18 +322,17 @@ body {
     align-items: center;
 }
 
-.product-placeholder {
+.product-main-image {
     width: 200px;
     height: 200px;
-    background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
     border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    text-align: center;
+    object-fit: cover;
     box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.product-main-image:hover {
+    transform: scale(1.05);
 }
 
 .product-placeholder i {
@@ -780,6 +813,20 @@ body {
         font-size: 1.1rem;
     }
 
+    .nav-logo {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .logo-image {
+        height: 40px;
+    }
+
+    .nav-logo h2 {
+        font-size: 1.2rem;
+    }
+
     .hero-container {
         grid-template-columns: 1fr;
         text-align: center;
@@ -797,6 +844,10 @@ body {
         padding: 0 1rem;
     }
 
+    .hero-logo-image {
+        height: 100px;
+    }
+
     .hero-placeholder {
         width: 250px;
         height: 250px;
@@ -809,7 +860,7 @@ body {
         margin: 0 15px;
     }
 
-    .product-placeholder {
+    .product-main-image {
         width: 180px;
         height: 180px;
         margin: 0 auto;
@@ -897,12 +948,16 @@ body {
         padding: 0 1rem;
     }
 
+    .hero-logo-image {
+        height: 80px;
+    }
+
     .hero-placeholder {
         width: 200px;
         height: 200px;
     }
 
-    .product-placeholder {
+    .product-main-image {
         width: 150px;
         height: 150px;
     }

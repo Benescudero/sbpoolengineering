@@ -38,27 +38,27 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Product Images Array (Replace with your actual image URLs)
+// Product Images Array - Cell Shield for Salt Water Pools
 const productImages = [
     {
-        src: 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Pool+Device+Front',
-        alt: 'Professional Pool Engineering Device - Front View'
+        src: 'https://raw.githubusercontent.com/Benescudero/sbpoolengineering/refs/heads/main/poolproduct2.jpg',
+        alt: 'Salt Water Pool Cell Shield - Main View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/3b82f6/ffffff?text=Pool+Device+Side',
-        alt: 'Professional Pool Engineering Device - Side View'
+        src: 'https://raw.githubusercontent.com/Benescudero/sbpoolengineering/refs/heads/main/poolproduct3.jpg',
+        alt: 'Salt Water Pool Cell Shield - Side View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/60a5fa/ffffff?text=Pool+Device+Top',
-        alt: 'Professional Pool Engineering Device - Top View'
+        src: 'https://raw.githubusercontent.com/Benescudero/sbpoolengineering/refs/heads/main/poolproduct4.jpg',
+        alt: 'Salt Water Pool Cell Shield - Detail View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/93c5fd/1e3a8a?text=Pool+Device+Detail',
-        alt: 'Professional Pool Engineering Device - Detail View'
+        src: 'https://raw.githubusercontent.com/Benescudero/sbpoolengineering/refs/heads/main/poolproduct5.jpg',
+        alt: 'Salt Water Pool Cell Shield - Installation View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/dbeafe/1e3a8a?text=Pool+Device+In+Use',
-        alt: 'Professional Pool Engineering Device - In Use'
+        src: 'https://raw.githubusercontent.com/Benescudero/sbpoolengineering/refs/heads/main/poolproduct1.jpg',
+        alt: 'Salt Water Pool Cell Shield - Complete Assembly'
     }
 ];
 
@@ -185,8 +185,8 @@ async function calculateShippingCost(zipCode) {
                 shippingCost += 1.50;
             }
             
-            // Add weight factor (2 pounds)
-            shippingCost += 2.00;
+            // Add weight factor (less than 1 pound)
+            shippingCost += 0.50;
             
             resolve(shippingCost);
         }, 1000);
@@ -225,8 +225,8 @@ function initializePayPalButton() {
                         }
                     },
                     items: [{
-                        name: 'Professional Pool Engineering Device',
-                        description: 'Professional-grade pool maintenance and monitoring solution',
+                        name: 'Salt Water Pool Cell Shield',
+                        description: 'Professional-grade cell shield for salt water pool systems',
                         unit_amount: {
                             value: basePrice.toFixed(2),
                             currency_code: 'USD'
