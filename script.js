@@ -5,13 +5,24 @@ const navMenu = document.querySelector('.nav-menu');
 hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
+    document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : 'auto';
 });
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
     hamburger.classList.remove('active');
     navMenu.classList.remove('active');
+    document.body.style.overflow = 'auto';
 }));
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+});
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -30,23 +41,23 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Product Images Array (Replace with your actual image URLs)
 const productImages = [
     {
-        src: 'https://via.placeholder.com/600x400/2563eb/ffffff?text=Product+Image+1',
+        src: 'https://via.placeholder.com/600x400/1e3a8a/ffffff?text=Pool+Device+Front',
         alt: 'Professional Pool Engineering Device - Front View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/667eea/ffffff?text=Product+Image+2',
+        src: 'https://via.placeholder.com/600x400/3b82f6/ffffff?text=Pool+Device+Side',
         alt: 'Professional Pool Engineering Device - Side View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/764ba2/ffffff?text=Product+Image+3',
+        src: 'https://via.placeholder.com/600x400/60a5fa/ffffff?text=Pool+Device+Top',
         alt: 'Professional Pool Engineering Device - Top View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/059669/ffffff?text=Product+Image+4',
+        src: 'https://via.placeholder.com/600x400/93c5fd/1e3a8a?text=Pool+Device+Detail',
         alt: 'Professional Pool Engineering Device - Detail View'
     },
     {
-        src: 'https://via.placeholder.com/600x400/dc2626/ffffff?text=Product+Image+5',
+        src: 'https://via.placeholder.com/600x400/dbeafe/1e3a8a?text=Pool+Device+In+Use',
         alt: 'Professional Pool Engineering Device - In Use'
     }
 ];
@@ -282,10 +293,10 @@ window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 100) {
         navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        navbar.style.boxShadow = '0 2px 20px rgba(30, 58, 138, 0.15)';
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = 'none';
+        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+        navbar.style.boxShadow = '0 2px 20px rgba(30, 58, 138, 0.1)';
     }
 });
 
@@ -369,9 +380,58 @@ function showSuccess(message) {
     }, 5000);
 }
 
+// Touch-friendly interactions for mobile
+function addTouchSupport() {
+    // Add touch support for product card
+    const productCard = document.querySelector('.product-card');
+    if (productCard) {
+        productCard.addEventListener('touchstart', function(e) {
+            this.style.transform = 'scale(0.98)';
+        });
+        
+        productCard.addEventListener('touchend', function(e) {
+            this.style.transform = 'scale(1)';
+        });
+    }
+    
+    // Add touch support for buttons
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('touchstart', function(e) {
+            this.style.transform = 'scale(0.95)';
+        });
+        
+        btn.addEventListener('touchend', function(e) {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    
+    // Add touch support for thumbnails
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.thumbnail')) {
+            e.target.closest('.thumbnail').style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                e.target.closest('.thumbnail').style.transform = 'scale(1)';
+            }, 150);
+        }
+    });
+}
+
+// Prevent zoom on double tap for mobile
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, false);
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('SB Pool Engineering website loaded successfully');
+    
+    // Add touch support
+    addTouchSupport();
     
     // Add any additional initialization code here
     // For example, analytics, additional event listeners, etc.

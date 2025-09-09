@@ -645,7 +645,7 @@ body {
 .product-details h2 {
     font-size: 2rem;
     font-weight: 700;
-    color: #1e293b;
+    color: #1e3a8a;
     margin-bottom: 1rem;
 }
 
@@ -656,7 +656,7 @@ body {
 .product-specs h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1e293b;
+    color: #1e3a8a;
     margin-bottom: 1rem;
 }
 
@@ -667,7 +667,7 @@ body {
 
 .product-specs li {
     padding: 0.5rem 0;
-    color: #64748b;
+    color: #3b82f6;
     position: relative;
     padding-left: 1.5rem;
 }
@@ -676,15 +676,16 @@ body {
     content: '✓';
     position: absolute;
     left: 0;
-    color: #2563eb;
+    color: #1e3a8a;
     font-weight: bold;
 }
 
 .pricing-section {
-    background: #f8fafc;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
     padding: 1.5rem;
     border-radius: 15px;
     margin-top: 2rem;
+    border: 2px solid #dbeafe;
 }
 
 .price-breakdown {
@@ -701,9 +702,9 @@ body {
 .price-item.total {
     font-weight: 700;
     font-size: 1.25rem;
-    color: #1e293b;
+    color: #1e3a8a;
     border-bottom: none;
-    border-top: 2px solid #2563eb;
+    border-top: 2px solid #1e3a8a;
     margin-top: 0.5rem;
     padding-top: 1rem;
 }
@@ -715,7 +716,7 @@ body {
 .shipping-calculator h4 {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #1e293b;
+    color: #1e3a8a;
     margin-bottom: 1rem;
 }
 
@@ -742,8 +743,8 @@ body {
 
 .form-group input:focus {
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    border-color: #1e3a8a;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
 }
 
 .paypal-button-container {
@@ -931,7 +932,7 @@ body {
     width: 20px;
     height: 20px;
     border: 3px solid #f3f3f3;
-    border-top: 3px solid #2563eb;
+    border-top: 3px solid #1e3a8a;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -956,10 +957,10 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #2563eb;
+    background: #1e3a8a;
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #1d4ed8;
+    background: #1e40af;
 }
