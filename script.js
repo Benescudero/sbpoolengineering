@@ -41,23 +41,23 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Product Images Array - Cell Shield for Salt Water Pools
 const productImages = [
     {
-        src: 'https://www.shieldbearer3dp.com/poolproduct2.jpg',
+        src: 'poolproduct2.jpg',
         alt: 'Salt Water Pool Cell Shield - Main View'
     },
     {
-        src: 'https://www.shieldbearer3dp.com/poolproduct3.jpg',
+        src: 'poolproduct3.jpg',
         alt: 'Salt Water Pool Cell Shield - Side View'
     },
     {
-        src: 'https://www.shieldbearer3dp.com/poolproduct4.jpg',
+        src: 'poolproduct4.jpg',
         alt: 'Salt Water Pool Cell Shield - Detail View'
     },
     {
-        src: 'https://www.shieldbearer3dp.com/poolproduct5.jpg',
+        src: 'poolproduct5.jpg',
         alt: 'Salt Water Pool Cell Shield - Installation View'
     },
     {
-        src: 'https://www.shieldbearer3dp.com/poolproduct1.jpg',
+        src: 'poolproduct1.jpg',
         alt: 'Salt Water Pool Cell Shield - Complete Assembly'
     }
 ];
