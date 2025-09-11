@@ -529,17 +529,19 @@ body {
     gap: 2rem;
 }
 
-.feature {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 16px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(59, 130, 246, 0.1);
-    backdrop-filter: blur(10px);
-}
+    .feature {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.25rem;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(59, 130, 246, 0.1);
+        backdrop-filter: blur(10px);
+        min-height: 120px;
+        box-sizing: border-box;
+    }
 
 .feature:hover {
     transform: translateY(-2px);
@@ -563,20 +565,29 @@ body {
     box-shadow: 0 6px 20px rgba(30, 58, 138, 0.2);
 }
 
-.feature h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #1e3a8a;
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
-}
+    .feature h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        hyphens: none;
+        white-space: normal;
+    }
 
-.feature p {
-    color: #3b82f6;
-    line-height: 1.7;
-    font-weight: 500;
-    font-size: 1rem;
-}
+    .feature p {
+        color: #3b82f6;
+        line-height: 1.5;
+        font-weight: 500;
+        font-size: 0.95rem;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        hyphens: none;
+        white-space: normal;
+        text-align: left;
+    }
 
 /* Contact Section */
 .contact-section {
@@ -1051,7 +1062,7 @@ body {
     }
 
     .hero-title {
-        font-size: 2.2rem;
+        font-size: 2rem;
         line-height: 1.2;
         margin-bottom: 1.5rem;
         word-wrap: break-word;
@@ -1060,12 +1071,13 @@ body {
         overflow-wrap: break-word;
         white-space: normal;
         text-align: center;
-        padding: 0 10px;
+        padding: 0 15px;
+        word-break: keep-all;
     }
 
     .hero-subtitle {
-        font-size: 1rem;
-        padding: 0 15px;
+        font-size: 0.95rem;
+        padding: 0 20px;
         margin-bottom: 2rem;
         line-height: 1.6;
         max-width: 100%;
@@ -1073,6 +1085,8 @@ body {
         hyphens: none;
         white-space: normal;
         text-align: center;
+        word-break: keep-all;
+        overflow-wrap: break-word;
     }
 
     .hero-main-logo {
@@ -1132,7 +1146,7 @@ body {
     }
 
     .about-text h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         margin-bottom: 1.5rem;
         line-height: 1.2;
         word-wrap: break-word;
@@ -1140,8 +1154,10 @@ body {
         max-width: 100%;
         white-space: normal;
         text-align: center;
-        padding: 0 10px;
+        padding: 0 15px;
         box-sizing: border-box;
+        word-break: keep-all;
+        overflow-wrap: break-word;
     }
 
     .about-text p {
@@ -1153,15 +1169,19 @@ body {
         margin-bottom: 1.5rem;
         white-space: normal;
         text-align: left;
-        padding: 0 5px;
+        padding: 0 10px;
         box-sizing: border-box;
+        word-break: keep-all;
+        overflow-wrap: break-word;
     }
 
     .about-features {
-        gap: 1.5rem;
+        gap: 1.25rem;
         max-width: 100%;
-        padding: 0 5px;
+        padding: 0 10px;
         box-sizing: border-box;
+        display: grid;
+        grid-template-columns: 1fr;
     }
 
     .feature {
@@ -1324,15 +1344,17 @@ body {
     }
 
     .section-header h2 {
-        font-size: 1.8rem;
+        font-size: 1.7rem;
         line-height: 1.2;
         word-wrap: break-word;
         hyphens: none;
         max-width: 100%;
         white-space: normal;
         text-align: center;
-        padding: 0 15px;
+        padding: 0 20px;
         box-sizing: border-box;
+        word-break: keep-all;
+        overflow-wrap: break-word;
     }
 
     .section-header p {
@@ -1567,7 +1589,7 @@ html {
         padding-right: 10px;
     }
     
-    /* Force proper text wrapping for long words */
+    /* Prevent word breaking - keep words intact */
     .hero-title,
     .hero-subtitle,
     .section-header h2,
@@ -1577,11 +1599,14 @@ html {
     .product-info h3,
     .product-description,
     .feature h3,
-    .feature p {
-        word-break: break-word;
-        overflow-wrap: anywhere;
+    .feature p,
+    .contact-item h3,
+    .contact-item p {
+        word-break: keep-all;
+        overflow-wrap: break-word;
         hyphens: none;
         white-space: normal;
+        line-height: 1.4;
     }
     
     /* Specific fixes for problematic text */
@@ -1598,6 +1623,55 @@ html {
     .about-text h2 {
         font-size: clamp(1.3rem, 4vw, 2rem);
         line-height: 1.2;
+    }
+    
+    /* Global mobile text optimization - prevent word breaking */
+    * {
+        word-break: keep-all !important;
+        overflow-wrap: break-word !important;
+        hyphens: none !important;
+    }
+    
+    /* Ensure proper text flow for specific elements */
+    .feature h3,
+    .feature p,
+    .about-text h2,
+    .about-text p,
+    .section-header h2,
+    .section-header p,
+    .hero-title,
+    .hero-subtitle,
+    .product-info h3,
+    .product-description,
+    .contact-item h3,
+    .contact-item p {
+        word-break: keep-all !important;
+        overflow-wrap: break-word !important;
+        hyphens: none !important;
+        white-space: normal !important;
+        line-height: 1.4 !important;
+    }
+    
+    /* Optimize feature boxes for better text flow */
+    .feature {
+        min-height: 140px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+    
+    .feature h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+    }
+    
+    .feature p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        flex-grow: 1;
     }
 }
 
