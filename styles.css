@@ -589,6 +589,572 @@ body {
         text-align: left;
     }
 
+/* Installation Section */
+.installation-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    position: relative;
+}
+
+.installation-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="installationPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><rect width="100" height="100" fill="none" stroke="%23dbeafe" stroke-width="1" opacity="0.2"/><circle cx="50" cy="50" r="30" fill="none" stroke="%23dbeafe" stroke-width="1" opacity="0.1"/></pattern></defs><rect width="1200" height="800" fill="url(%23installationPattern)"/></svg>');
+    opacity: 0.3;
+}
+
+.installation-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Visual Installation Flow */
+.installation-flow {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 12px 40px rgba(30, 58, 138, 0.1), 0 6px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.installation-flow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af, #3b82f6);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+.flow-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.flow-header h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 0.5rem;
+}
+
+.flow-header p {
+    color: #3b82f6;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Parts Visual Section */
+.parts-visual {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.section-label i {
+    font-size: 1.3rem;
+    color: #3b82f6;
+}
+
+.parts-showcase {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.main-part {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    flex: 1;
+    min-width: 200px;
+}
+
+.part-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.main-shield {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
+}
+
+.part-details h4 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 0.25rem;
+}
+
+.part-details p {
+    color: #3b82f6;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.accessories {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.accessory-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(30, 58, 138, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.accessory-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.15);
+}
+
+.accessory {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    font-size: 1.2rem;
+}
+
+.accessory-item span {
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+/* Flow Arrow */
+.flow-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+.flow-arrow i {
+    font-size: 2rem;
+    color: #3b82f6;
+    background: white;
+    border-radius: 50%;
+    padding: 1rem;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.2);
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Steps Visual Section */
+.steps-visual {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.steps-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+    min-width: 120px;
+    position: relative;
+}
+
+.step-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.2);
+}
+
+.step-visual {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+}
+
+.step-item span {
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.step-connector {
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af);
+    border-radius: 1px;
+    margin: 0 0.5rem;
+}
+
+/* Important Note */
+.important-note {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.note-icon {
+    width: 50px;
+    height: 50px;
+    background: #f59e0b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.note-content h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 0.25rem;
+}
+
+.note-content p {
+    color: #92400e;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Download Complete Guide */
+.download-complete-guide {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.download-complete-guide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af);
+}
+
+.download-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.download-info h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 0.5rem;
+}
+
+.download-info p {
+    color: #3b82f6;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.download-complete-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem 2rem;
+    background: white;
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    color: #1e3a8a;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
+    min-width: 180px;
+}
+
+.download-complete-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.download-complete-btn i {
+    font-size: 1.8rem;
+    color: #1e3a8a;
+    transition: all 0.3s ease;
+}
+
+.download-complete-btn:hover i {
+    transform: scale(1.1);
+    color: #3b82f6;
+}
+
+.download-complete-btn span {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1e3a8a;
+}
+
+.download-complete-btn small {
+    color: #3b82f6;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.warning {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    color: #92400e;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.warning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.success {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    color: #065f46;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.success::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981, #059669);
+}
+
+/* Warnings Section */
+.warnings-section {
+    margin-bottom: 4rem;
+}
+
+.warnings-section h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.warnings-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af);
+    border-radius: 2px;
+}
+
+.warning-boxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.warning-box {
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.1), 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.warning-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.warning-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(30, 58, 138, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.warning-box:hover::before {
+    transform: scaleX(1);
+}
+
+.wind-warning {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-color: #ef4444;
+}
+
+.wind-warning::before {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.maintenance-warning {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-color: #3b82f6;
+}
+
+.warning-box i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #1e3a8a;
+}
+
+.wind-warning i {
+    color: #ef4444;
+}
+
+.maintenance-warning i {
+    color: #3b82f6;
+}
+
+.warning-box h4 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.warning-box p {
+    color: #3b82f6;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.wind-warning p {
+    color: #dc2626;
+}
+
+
 /* Contact Section */
 .contact-section {
     padding: 100px 0;
@@ -1479,6 +2045,236 @@ body {
         border-radius: 12px;
         box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
     }
+
+    /* Installation Section Mobile Styles */
+    .parts-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 10px;
+    }
+
+    .part-item {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+        border-radius: 12px;
+    }
+
+    .part-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .part-info h4 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .part-info p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .step {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+    }
+
+    .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        align-self: center;
+    }
+
+    .step-content h4 {
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .step-content p {
+        font-size: 0.95rem;
+        text-align: left;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .installation-flow {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .flow-header h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .flow-header p {
+        font-size: 1rem;
+    }
+
+    .parts-visual {
+        padding: 1.5rem;
+    }
+
+    .parts-showcase {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .main-part {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+        min-width: auto;
+    }
+
+    .part-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .accessories {
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .accessory-item {
+        min-width: 70px;
+        padding: 0.75rem;
+    }
+
+    .accessory {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .accessory-item span {
+        font-size: 0.75rem;
+    }
+
+    .flow-arrow i {
+        font-size: 1.5rem;
+        padding: 0.75rem;
+    }
+
+    .steps-visual {
+        padding: 1.5rem;
+    }
+
+    .steps-flow {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .step-item {
+        min-width: auto;
+        padding: 1rem;
+    }
+
+    .step-visual {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .step-item span {
+        font-size: 0.85rem;
+    }
+
+    .step-connector {
+        width: 2px;
+        height: 20px;
+        margin: 0.5rem 0;
+    }
+
+    .important-note {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+        padding: 1.25rem;
+    }
+
+    .note-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .note-content h4 {
+        font-size: 1rem;
+    }
+
+    .note-content p {
+        font-size: 0.9rem;
+    }
+
+    .download-complete-guide {
+        margin: 1.5rem 0;
+        padding: 1.5rem;
+    }
+
+    .download-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .download-info h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .download-info p {
+        font-size: 0.9rem;
+    }
+
+    .download-complete-btn {
+        min-width: 160px;
+        padding: 1rem 1.5rem;
+    }
+
+    .download-complete-btn i {
+        font-size: 1.5rem;
+    }
+
+    .download-complete-btn span {
+        font-size: 0.95rem;
+    }
+
+    .download-complete-btn small {
+        font-size: 0.75rem;
+    }
+
+    .warning-boxes {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 10px;
+    }
+
+    .warning-box {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .warning-box h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .warning-box p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
 }
 
 /* Loading Animation */

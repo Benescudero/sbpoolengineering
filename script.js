@@ -426,6 +426,117 @@ document.addEventListener('touchend', function (event) {
     lastTouchEnd = now;
 }, false);
 
+// Open Installation Guide Function
+function downloadInstallationGuide() {
+    // URLs for both installation guide images
+    const guide1Url = 'https://raw.githubusercontent.com/Benescudero/sbpoolengineering/main/installationguide1.jpeg';
+    const guide2Url = 'https://raw.githubusercontent.com/Benescudero/sbpoolengineering/main/installationguide2.jpeg';
+    
+    // Create HTML content with both images
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Cell Shield Installation Guide</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 20px;
+                    background: #f8fafc;
+                    font-family: 'Inter', sans-serif;
+                }
+                .guide-container {
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 16px;
+                    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.1);
+                    overflow: hidden;
+                }
+                .guide-header {
+                    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+                    color: white;
+                    padding: 2rem;
+                    text-align: center;
+                }
+                .guide-header h1 {
+                    margin: 0;
+                    font-size: 2rem;
+                    font-weight: 700;
+                }
+                .guide-header p {
+                    margin: 0.5rem 0 0 0;
+                    opacity: 0.9;
+                }
+                .guide-image {
+                    width: 100%;
+                    height: auto;
+                    display: block;
+                    border-bottom: 2px solid #e5e7eb;
+                }
+                .guide-image:last-child {
+                    border-bottom: none;
+                }
+                .image-caption {
+                    padding: 1rem 2rem;
+                    background: #f8fafc;
+                    border-bottom: 1px solid #e5e7eb;
+                    text-align: center;
+                    color: #1e3a8a;
+                    font-weight: 600;
+                }
+                .image-caption:last-child {
+                    border-bottom: none;
+                }
+                @media (max-width: 768px) {
+                    body {
+                        padding: 10px;
+                    }
+                    .guide-header {
+                        padding: 1.5rem;
+                    }
+                    .guide-header h1 {
+                        font-size: 1.5rem;
+                    }
+                    .image-caption {
+                        padding: 0.75rem 1rem;
+                        font-size: 0.9rem;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="guide-container">
+                <div class="guide-header">
+                    <h1>Cell Shield Installation Guide</h1>
+                    <p>Complete step-by-step visual instructions</p>
+                </div>
+                <div class="image-caption">Part 1: Parts List & Initial Setup</div>
+                <img src="${guide1Url}" alt="Cell Shield Installation Guide Part 1" class="guide-image">
+                <div class="image-caption">Part 2: Final Steps & Safety Information</div>
+                <img src="${guide2Url}" alt="Cell Shield Installation Guide Part 2" class="guide-image">
+            </div>
+        </body>
+        </html>
+    `;
+    
+    // Create a new window with the HTML content
+    const newWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    
+    if (newWindow) {
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+        
+        // Show success message
+        showSuccess('Installation guide opened in new tab!');
+    } else {
+        // Fallback if popup is blocked
+        alert('Please allow popups for this site to view the installation guide, or try again.');
+    }
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('SB Pool Engineering website loaded successfully');
