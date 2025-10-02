@@ -73,6 +73,7 @@ body {
     transition: color 0.3s ease;
     position: relative;
     padding: 0.5rem 0;
+    display: block;
 }
 
 .nav-link:hover {
@@ -88,6 +89,7 @@ body {
     left: 0;
     background-color: #3b82f6;
     transition: width 0.3s ease;
+    will-change: width;
 }
 
 .nav-link:hover::after {
@@ -1155,6 +1157,455 @@ body {
 }
 
 
+/* Performance Section */
+.performance-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    position: relative;
+}
+
+.performance-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="performancePattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="40" fill="none" stroke="%23dbeafe" stroke-width="1" opacity="0.2"/><circle cx="50" cy="50" r="20" fill="none" stroke="%23dbeafe" stroke-width="1" opacity="0.3"/><circle cx="50" cy="50" r="8" fill="%23dbeafe" opacity="0.4"/></pattern></defs><rect width="1200" height="600" fill="url(%23performancePattern)"/></svg>');
+    opacity: 0.3;
+}
+
+.performance-content {
+    position: relative;
+    z-index: 1;
+}
+
+.performance-intro {
+    text-align: center;
+    margin-bottom: 4rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.performance-intro h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+}
+
+.performance-intro p {
+    color: #3b82f6;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.performance-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 12px 40px rgba(30, 58, 138, 0.1), 0 6px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.performance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af, #10b981);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.performance-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(30, 58, 138, 0.15), 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.performance-card:hover::before {
+    transform: scaleX(1);
+}
+
+.performance-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.performance-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.performance-card:hover .performance-icon {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.performance-data h4 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+.performance-data p {
+    color: #3b82f6;
+    line-height: 1.6;
+    font-weight: 500;
+    margin: 0;
+}
+
+.performance-details {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 12px 40px rgba(30, 58, 138, 0.1), 0 6px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.performance-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981, #059669, #047857);
+}
+
+.details-content h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.details-content p {
+    color: #3b82f6;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+}
+
+.test-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.test-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+}
+
+.test-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.1);
+}
+
+.test-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.test-label i {
+    font-size: 1.2rem;
+    color: #3b82f6;
+    width: 20px;
+}
+
+.test-label span {
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.test-value {
+    color: #1e3a8a;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.performance-cta {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.performance-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="ctaGlow" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23ctaGlow)"/><circle cx="800" cy="300" r="150" fill="url(%23ctaGlow)"/><circle cx="400" cy="700" r="120" fill="url(%23ctaGlow)"/></svg>');
+    opacity: 0.3;
+}
+
+.cta-content {
+    position: relative;
+    z-index: 1;
+}
+
+.cta-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.cta-content p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.performance-cta .btn {
+    background: white;
+    color: #1e3a8a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.5rem 2.5rem;
+    font-size: 1.1rem;
+    min-width: 220px;
+    margin: 0 auto;
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+.performance-cta .btn:hover {
+    background: #f8fafc;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 255, 255, 0.3);
+}
+
+.performance-cta .btn i {
+    font-size: 1.5rem;
+    color: #dc2626;
+}
+
+.performance-cta .btn span {
+    font-weight: 700;
+}
+
+.performance-cta .btn small {
+    color: #3b82f6;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Instagram Section */
+.instagram-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    position: relative;
+}
+
+.instagram-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="instagramPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse"><circle cx="40" cy="40" r="30" fill="none" stroke="%23dbeafe" stroke-width="1" opacity="0.2"/><circle cx="40" cy="40" r="15" fill="none" stroke="%23dbeafe" stroke-width="1" opacity="0.3"/><circle cx="40" cy="40" r="5" fill="%23dbeafe" opacity="0.4"/></pattern></defs><rect width="1200" height="600" fill="url(%23instagramPattern)"/></svg>');
+    opacity: 0.3;
+}
+
+.instagram-feed {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(30, 58, 138, 0.12), 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.instagram-feed::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e1306c, #fd1d1d, #fcb045, #e1306c);
+    background-size: 200% 100%;
+    animation: instagramShimmer 3s ease-in-out infinite;
+}
+
+@keyframes instagramShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.instagram-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.instagram-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.instagram-profile i {
+    font-size: 2.5rem;
+    background: linear-gradient(45deg, #e1306c, #fd1d1d, #fcb045);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.profile-info h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 0.25rem;
+}
+
+.profile-info p {
+    color: #3b82f6;
+    font-weight: 500;
+    margin: 0;
+}
+
+.instagram-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    position: relative;
+}
+
+.instagram-post {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.1), 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    position: relative;
+}
+
+.instagram-post:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(30, 58, 138, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.post-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.instagram-post:hover .post-image {
+    transform: scale(1.05);
+}
+
+.post-content {
+    padding: 1.5rem;
+}
+
+.post-caption {
+    color: #1e3a8a;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.post-date {
+    color: #3b82f6;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.post-link {
+    color: #e1306c;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+}
+
+.post-link:hover {
+    color: #fd1d1d;
+}
+
+.loading-posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    grid-column: 1 / -1;
+}
+
+.loading-posts p {
+    margin-top: 1rem;
+    color: #3b82f6;
+    font-weight: 500;
+}
+
 /* Contact Section */
 .contact-section {
     padding: 100px 0;
@@ -1237,6 +1688,17 @@ body {
     font-size: 1.1rem;
 }
 
+.contact-item a {
+    color: #e1306c;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.contact-item a:hover {
+    color: #fd1d1d;
+}
+
 /* Footer */
 .footer {
     background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
@@ -1286,6 +1748,34 @@ body {
 
 .footer-links a:hover {
     color: white;
+}
+
+.footer-social {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #dbeafe;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(219, 234, 254, 0.2);
+}
+
+.social-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.social-link i {
+    font-size: 1.2rem;
 }
 
 .footer-bottom {
@@ -2029,6 +2519,155 @@ body {
         max-width: 100%;
     }
 
+    .performance-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .performance-card {
+        padding: 2rem;
+        border-radius: 16px;
+    }
+
+    .performance-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .performance-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        align-self: center;
+    }
+
+    .performance-data h4 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .performance-data p {
+        font-size: 0.95rem;
+    }
+
+    .performance-details {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .details-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .details-content p {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .test-results {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .test-item {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+        padding: 1.25rem;
+    }
+
+    .test-label {
+        justify-content: center;
+    }
+
+    .test-value {
+        font-size: 1.1rem;
+    }
+
+    .performance-cta {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .cta-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .cta-content p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .performance-cta .btn {
+        min-width: 200px;
+        padding: 1.25rem 2rem;
+        font-size: 1rem;
+    }
+
+    .performance-cta .btn i {
+        font-size: 1.3rem;
+    }
+
+    .performance-cta .btn small {
+        font-size: 0.8rem;
+    }
+
+    .instagram-feed {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .instagram-header {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .instagram-profile {
+        justify-content: center;
+    }
+
+    .instagram-posts {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .instagram-post {
+        border-radius: 12px;
+    }
+
+    .post-image {
+        height: 200px;
+    }
+
+    .post-content {
+        padding: 1.25rem;
+    }
+
+    .post-caption {
+        font-size: 0.9rem;
+    }
+
+    .post-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .footer-social {
+        justify-content: center;
+    }
+
     .contact-item {
         padding: 1.5rem;
         flex-direction: column;
@@ -2527,26 +3166,7 @@ html {
     animation: fadeInRight 0.8s ease-out;
 }
 
-/* Enhanced hover effects */
-.nav-link {
-    position: relative;
-    overflow: hidden;
-}
-
-.nav-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-    transition: left 0.5s;
-}
-
-.nav-link:hover::before {
-    left: 100%;
-}
+/* Enhanced hover effects - removed conflicting styles */
 
 /* Enhanced logo animation */
 .logo-image {
@@ -2656,24 +3276,6 @@ input:focus {
     
     .nav-link {
         position: relative;
-        overflow: hidden;
-    }
-    
-    .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #3b82f6, #1e40af);
-        transition: all 0.3s ease;
-        transform: translateX(-50%);
-    }
-    
-    .nav-link:hover::after,
-    .nav-link:active::after {
-        width: 80%;
     }
     
     /* Mobile touch feedback */

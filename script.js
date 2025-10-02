@@ -426,6 +426,23 @@ document.addEventListener('touchend', function (event) {
     lastTouchEnd = now;
 }, false);
 
+// Open Performance Report Function
+function openPerformanceReport() {
+    // URL for the performance report PDF
+    const reportUrl = 'Cell_Shield_Performance_Report.pdf';
+    
+    // Open the PDF in a new tab
+    const newWindow = window.open(reportUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    
+    if (newWindow) {
+        // Show success message
+        showSuccess('Performance report opened in new tab!');
+    } else {
+        // Fallback if popup is blocked
+        alert('Please allow popups for this site to view the performance report, or try again.');
+    }
+}
+
 // Open Installation Guide Function
 function downloadInstallationGuide() {
     // URLs for both installation guide images
@@ -548,11 +565,120 @@ document.addEventListener('DOMContentLoaded', function() {
     // For example, analytics, additional event listeners, etc.
 });
 
+// Instagram Feed Integration (Static Posts)
+class InstagramFeed {
+    constructor() {
+        // Static Instagram-style posts using your product images
+        this.posts = [
+            {
+                id: '1',
+                media_url: 'poolproduct2.jpg',
+                caption: 'Our professional-grade Salt Water Pool Cell Shield in action! 🏊‍♂️✨ Protecting your salt cell from scale buildup and extending its lifespan by up to 3x. Lightweight design and easy installation make this a must-have for pool owners. #PoolMaintenance #SaltWaterPool #PoolEngineering #CellShield',
+                permalink: 'https://instagram.com/sbpoolengineering',
+                timestamp: new Date(Date.now() - 86400000 * 1).toISOString()
+            },
+            {
+                id: '2',
+                media_url: 'poolproduct3.jpg',
+                caption: 'Easy installation process for our Cell Shield! 🛠️ Just a few simple steps to protect your investment. Professional-grade materials designed to withstand the elements. Contact us for professional installation services or DIY guidance. #EasyInstallation #PoolProtection #ProfessionalService #DIY',
+                permalink: 'https://instagram.com/sbpoolengineering',
+                timestamp: new Date(Date.now() - 86400000 * 3).toISOString()
+            },
+            {
+                id: '3',
+                media_url: 'poolproduct4.jpg',
+                caption: 'Quality materials and precision engineering make the difference! 💪 Our Cell Shield is built to last and designed specifically for salt water pool professionals and homeowners. Prevent scale buildup and save money on salt cell replacements. #QualityMaterials #PoolEngineering #BuiltToLast #SaveMoney',
+                permalink: 'https://instagram.com/sbpoolengineering',
+                timestamp: new Date(Date.now() - 86400000 * 5).toISOString()
+            }
+        ];
+    }
+
+    loadPosts() {
+        const postsContainer = document.getElementById('instagramPosts');
+        if (!postsContainer) return;
+
+        // Add a small delay for better user experience
+        setTimeout(() => {
+            this.renderPosts(this.posts);
+        }, 800);
+    }
+
+    renderPosts(posts) {
+        const postsContainer = document.getElementById('instagramPosts');
+        if (!postsContainer) return;
+
+        postsContainer.innerHTML = posts.map(post => this.createPostHTML(post)).join('');
+        
+        // Add animation to posts
+        setTimeout(() => {
+            document.querySelectorAll('.instagram-post').forEach((post, index) => {
+                post.style.opacity = '0';
+                post.style.transform = 'translateY(30px)';
+                post.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                
+                setTimeout(() => {
+                    post.style.opacity = '1';
+                    post.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        }, 100);
+    }
+
+    createPostHTML(post) {
+        const date = new Date(post.timestamp);
+        const formattedDate = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        return `
+            <div class="instagram-post">
+                <img src="${post.media_url}" alt="Instagram Post" class="post-image" loading="lazy">
+                <div class="post-content">
+                    <p class="post-caption">${this.truncateCaption(post.caption, 120)}</p>
+                    <div class="post-meta">
+                        <span class="post-date">${formattedDate}</span>
+                        <a href="${post.permalink}" target="_blank" rel="noopener noreferrer" class="post-link">
+                            View on Instagram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    truncateCaption(caption, maxLength) {
+        if (!caption) return '';
+        if (caption.length <= maxLength) return caption;
+        return caption.substring(0, maxLength) + '...';
+    }
+
+    // Method to update posts manually (for when you want to change the content)
+    updatePosts(newPosts) {
+        this.posts = newPosts;
+        this.loadPosts();
+    }
+}
+
+// Initialize Instagram feed
+const instagramFeed = new InstagramFeed();
+
+// Load Instagram posts when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Load Instagram posts after a short delay to ensure everything is rendered
+    setTimeout(() => {
+        instagramFeed.loadPosts();
+    }, 1000);
+});
+
 // Export functions for testing (if needed)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         calculateShippingCost,
         updatePricing,
-        validateZipCode
+        validateZipCode,
+        InstagramFeed
     };
 }
