@@ -71,11 +71,67 @@ function openProductModal() {
     // Initialize the product gallery
     initializeProductGallery();
     
-    // Initialize PayPal button
-    initializePayPalButton();
+    // Initialize PayPal button (hidden initially)
+    // initializePayPalButton(); // Will be called after shipping calculation
     
     // Calculate initial pricing
     updatePricing();
+    
+    // Reset shipping state
+    calculatedShipping = false;
+    shippingCost = 0;
+    
+    // Clear zip code input
+    const zipCodeInput = document.getElementById('zipCode');
+    if (zipCodeInput) {
+        zipCodeInput.value = '';
+    }
+    
+    // Hide PayPal section initially
+    const paypalSection = document.getElementById('paypalSection');
+    if (paypalSection) {
+        paypalSection.style.display = 'none';
+    }
+    
+    // Hide shipping result initially
+    const shippingResult = document.getElementById('shippingResult');
+    if (shippingResult) {
+        shippingResult.style.display = 'none';
+    }
+    
+    // Setup event listeners (remove old ones first to avoid duplicates)
+    const calculateBtn = document.getElementById('calculateShippingBtn');
+    if (calculateBtn) {
+        // Clone and replace to remove all event listeners
+        const newCalculateBtn = calculateBtn.cloneNode(true);
+        calculateBtn.parentNode.replaceChild(newCalculateBtn, calculateBtn);
+        
+        // Add fresh event listener
+        newCalculateBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Button click event triggered');
+            calculateShipping();
+        });
+    }
+    
+    // Allow Enter key to calculate shipping
+    if (zipCodeInput) {
+        // Clone and replace to remove all event listeners
+        const newZipCodeInput = zipCodeInput.cloneNode(true);
+        zipCodeInput.parentNode.replaceChild(newZipCodeInput, zipCodeInput);
+        
+        newZipCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                calculateShipping();
+            }
+        });
+        
+        // Only allow numbers in zip code input
+        newZipCodeInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '').substring(0, 5);
+        });
+    }
 }
 
 function closeProductModal() {
@@ -129,141 +185,1179 @@ function initializeProductGallery() {
 
 // Pricing and Shipping Calculator
 const basePrice = 199.00;
-const paypalFeeRate = 0.0349; // 3.49%
 
 function updatePricing() {
-    const paypalFee = basePrice * paypalFeeRate;
-    const shippingCost = parseFloat(document.getElementById('shippingCost').textContent.replace('$', '')) || 0;
-    const total = basePrice + paypalFee + shippingCost;
-    
-    document.getElementById('paypalFee').textContent = `$${paypalFee.toFixed(2)}`;
-    document.getElementById('totalPrice').textContent = `$${total.toFixed(2)}`;
+    // Only update if elements exist (modal is open)
+    const totalPriceElement = document.getElementById('totalPrice');
+    if (totalPriceElement) {
+        totalPriceElement.textContent = `$${basePrice.toFixed(2)} + Shipping`;
+    }
 }
 
-// Shipping Calculator
-async function calculateShipping() {
-    const zipCode = document.getElementById('zipCode').value.trim();
+// Shipping Calculator - Calculate shipping from Orlando to customer zip code
+let shippingCost = 0;
+let calculatedShipping = false;
+
+function calculateShipping() {
+    console.log('Calculate Shipping button clicked!');
     
-    if (!zipCode || zipCode.length !== 5) {
-        alert('Please enter a valid 5-digit ZIP code');
+    const zipCodeInput = document.getElementById('zipCode');
+    if (!zipCodeInput) {
+        console.error('Zip code input element not found!');
         return;
     }
     
-    const shippingElement = document.getElementById('shippingCost');
-    shippingElement.innerHTML = '<span class="loading"></span>';
+    const zipCode = zipCodeInput.value.trim();
+    console.log('Zip code entered:', zipCode);
     
-    try {
-        // Simulate API call to shipping calculator
-        // In a real implementation, you would call a shipping API like USPS, UPS, or FedEx
-        const shippingCost = await calculateShippingCost(zipCode);
+    if (!zipCode) {
+        console.log('No zip code entered');
+        showError('Please enter a zip code');
+        return;
+    }
+    
+    if (!validateZipCode(zipCode)) {
+        console.log('Invalid zip code format');
+        showError('Please enter a valid 5-digit zip code');
+        return;
+    }
+    
+    // Show loading state
+    const calculateBtn = document.getElementById('calculateShippingBtn');
+    if (!calculateBtn) {
+        console.error('Calculate button not found!');
+        return;
+    }
+    
+    const originalText = calculateBtn.innerHTML;
+    calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
+    calculateBtn.disabled = true;
+    
+    console.log('Starting calculation for zip code:', zipCode);
+    
+    // Simulate API call delay
+        setTimeout(() => {
+        // Calculate shipping based on distance from Orlando (32801)
+        shippingCost = calculateShippingCost(zipCode);
+        console.log('Calculated shipping cost:', shippingCost);
         
-        shippingElement.textContent = `$${shippingCost.toFixed(2)}`;
-        updatePricing();
-    } catch (error) {
-        console.error('Error calculating shipping:', error);
-        shippingElement.textContent = 'Error calculating shipping';
+        // Update UI
+        const shippingCostElement = document.getElementById('shippingCost');
+        const totalPriceElement = document.getElementById('totalPrice');
+        const shippingResultElement = document.getElementById('shippingResult');
+        const paypalSectionElement = document.getElementById('paypalSection');
+        
+        if (shippingCostElement) {
+            shippingCostElement.textContent = `$${shippingCost.toFixed(2)}`;
+        } else {
+            console.error('shippingCost element not found');
+        }
+        
+        if (totalPriceElement) {
+            totalPriceElement.textContent = `$${(basePrice + shippingCost).toFixed(2)}`;
+        } else {
+            console.error('totalPrice element not found');
+        }
+        
+        // Show success message
+        if (shippingResultElement) {
+            shippingResultElement.style.display = 'block';
+        } else {
+            console.error('shippingResult element not found');
+        }
+        
+        showSuccess(`Shipping calculated: $${shippingCost.toFixed(2)} to ${zipCode}`);
+        
+        // Show PayPal button
+        if (paypalSectionElement) {
+            paypalSectionElement.style.display = 'block';
+        } else {
+            console.error('paypalSection element not found');
+        }
+        
+        // Reinitialize PayPal with new total
+        calculatedShipping = true;
+        initializePayPalButton();
+        
+        // Reset button
+        calculateBtn.innerHTML = originalText;
+        calculateBtn.disabled = false;
+        
+        console.log('Shipping calculation complete!');
+        
+    }, 1500);
+}
+
+function calculateShippingCost(zipCode) {
+    // Orlando, FL coordinates (approximate)
+    const orlandoLat = 28.5383;
+    const orlandoLon = -81.3792;
+    
+    // Get destination coordinates (simplified - in production, use a geocoding service)
+    const destination = getCoordinatesFromZip(zipCode);
+    
+    if (!destination) {
+        // Default shipping cost if we can't determine location
+        return 15.99;
+    }
+    
+    // Calculate distance using Haversine formula (simplified)
+    const distance = calculateDistance(orlandoLat, orlandoLon, destination.lat, destination.lon);
+    
+    // Shipping cost based on distance zones
+    if (distance <= 100) {
+        return 8.99; // Local/Regional
+    } else if (distance <= 300) {
+        return 12.99; // Regional
+    } else if (distance <= 600) {
+        return 15.99; // Continental
+    } else if (distance <= 1200) {
+        return 19.99; // Cross-country
+    } else {
+        return 24.99; // Extended shipping
     }
 }
 
-// Simulate shipping cost calculation
-async function calculateShippingCost(zipCode) {
-    // This is a mock function - replace with actual shipping API
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // Mock shipping calculation based on distance from Orlando, FL
-            const orlandoZip = '32801';
-            const distance = Math.abs(parseInt(zipCode) - parseInt(orlandoZip));
-            
-            // Base shipping cost with distance factor
-            let shippingCost = 8.99; // Base cost for small package
-            
-            if (distance > 1000) {
-                shippingCost += 5.00; // Additional cost for far distances
-            } else if (distance > 500) {
-                shippingCost += 3.00;
-            } else if (distance > 100) {
-                shippingCost += 1.50;
-            }
-            
-            // Add weight factor (less than 1 pound)
-            shippingCost += 0.50;
-            
-            resolve(shippingCost);
-        }, 1000);
-    });
+function getCoordinatesFromZip(zipCode) {
+    // Comprehensive Florida zip code to coordinates mapping
+    const zipCoordinates = {
+        // Central Florida - Orlando Area
+        '32701': { lat: 28.6028, lon: -81.2006 }, // Altamonte Springs
+        '32702': { lat: 28.6611, lon: -81.3656 }, // Altoona
+        '32703': { lat: 28.8500, lon: -81.2900 }, // Apopka
+        '32704': { lat: 28.8500, lon: -81.2900 }, // Apopka
+        '32707': { lat: 28.7339, lon: -81.3478 }, // Casselberry
+        '32708': { lat: 28.6667, lon: -81.3456 }, // Winter Springs
+        '32709': { lat: 28.6611, lon: -81.3656 }, // Altoona
+        '32710': { lat: 28.7300, lon: -81.3900 }, // Fern Park
+        '32712': { lat: 28.8500, lon: -81.2900 }, // Apopka
+        '32713': { lat: 28.7800, lon: -81.1700 }, // Debary
+        '32714': { lat: 28.8900, lon: -81.3100 }, // Altamonte Springs
+        '32715': { lat: 28.6611, lon: -81.3656 }, // Altoona
+        '32716': { lat: 28.9000, lon: -81.2500 }, // Debary
+        '32718': { lat: 28.6400, lon: -81.1900 }, // Oviedo
+        '32719': { lat: 28.7000, lon: -81.4100 }, // Longwood
+        '32720': { lat: 28.8700, lon: -81.0200 }, // DeLand
+        '32721': { lat: 28.8700, lon: -81.0200 }, // DeLand
+        '32722': { lat: 28.8700, lon: -81.0200 }, // DeLand
+        '32723': { lat: 28.8700, lon: -81.0200 }, // DeLand
+        '32724': { lat: 28.8700, lon: -81.0200 }, // DeLand
+        '32725': { lat: 28.8889, lon: -81.0192 }, // Deltona
+        '32726': { lat: 28.9006, lon: -81.2139 }, // Eustis
+        '32727': { lat: 28.8727, lon: -81.0170 }, // DeLand
+        '32728': { lat: 28.8889, lon: -81.0192 }, // Deltona
+        '32730': { lat: 28.8889, lon: -81.0192 }, // Deltona
+        '32732': { lat: 28.9006, lon: -81.2139 }, // Eustis
+        '32733': { lat: 28.9200, lon: -81.3600 }, // Sorrento
+        '32735': { lat: 28.9200, lon: -81.4100 }, // Grand Island
+        '32736': { lat: 28.9006, lon: -81.2139 }, // Eustis
+        '32738': { lat: 28.8889, lon: -81.0192 }, // Deltona
+        '32739': { lat: 28.9200, lon: -81.4100 }, // Deltona
+        '32744': { lat: 29.0300, lon: -81.1000 }, // Lake Helen
+        '32746': { lat: 29.0700, lon: -81.3400 }, // Lake Mary
+        '32750': { lat: 28.6333, lon: -81.3667 }, // Longwood
+        '32751': { lat: 28.6278, lon: -81.3631 }, // Maitland
+        '32752': { lat: 28.7000, lon: -81.4100 }, // Longwood
+        '32753': { lat: 28.6333, lon: -81.3667 }, // Longwood
+        '32754': { lat: 28.6278, lon: -81.3631 }, // Maitland
+        '32756': { lat: 29.0600, lon: -81.4900 }, // Mount Dora
+        '32757': { lat: 29.0600, lon: -81.4900 }, // Mount Dora
+        '32759': { lat: 28.5767, lon: -81.2067 }, // Oak Hill
+        '32762': { lat: 28.6400, lon: -81.1900 }, // Oviedo
+        '32763': { lat: 28.7800, lon: -81.1700 }, // Orange City
+        '32764': { lat: 28.9200, lon: -81.3600 }, // Osteen
+        '32765': { lat: 28.6400, lon: -81.1900 }, // Oviedo
+        '32766': { lat: 28.9200, lon: -81.3600 }, // Oviedo
+        '32767': { lat: 29.0300, lon: -81.2900 }, // Osteen
+        '32768': { lat: 28.9200, lon: -81.2900 }, // Paisley
+        '32771': { lat: 28.7500, lon: -81.2400 }, // Sanford
+        '32772': { lat: 28.7800, lon: -81.2700 }, // Sanford
+        '32773': { lat: 28.8000, lon: -81.2700 }, // Sanford
+        '32774': { lat: 29.0400, lon: -81.3300 }, // Sanford
+        '32775': { lat: 29.0000, lon: -81.5300 }, // Scottsmoor
+        '32776': { lat: 29.1700, lon: -81.0200 }, // Seville
+        '32777': { lat: 29.1000, lon: -81.4400 }, // Sorrento
+        '32778': { lat: 29.2000, lon: -81.4900 }, // Tavares
+        '32779': { lat: 28.7300, lon: -81.3900 }, // Longwood
+        '32780': { lat: 28.9300, lon: -80.6100 }, // Titusville
+        '32781': { lat: 28.9300, lon: -80.6100 }, // Titusville
+        '32783': { lat: 29.2000, lon: -81.4900 }, // Titusville
+        '32784': { lat: 29.1000, lon: -81.4400 }, // Umatilla
+        '32789': { lat: 28.7000, lon: -81.3400 }, // Winter Park
+        '32790': { lat: 28.6000, lon: -81.3400 }, // Winter Park
+        '32792': { lat: 28.7000, lon: -81.3400 }, // Winter Park
+        '32793': { lat: 28.7000, lon: -81.3400 }, // Winter Park
+        '32794': { lat: 28.7000, lon: -81.3400 }, // Winter Park
+        '32795': { lat: 28.7000, lon: -81.3400 }, // Winter Park
+        '32796': { lat: 28.9800, lon: -80.6200 }, // Titusville
+        '32798': { lat: 29.1900, lon: -81.8700 }, // Yalaha
+        '32799': { lat: 28.5383, lon: -81.3792 }, // Orlando
+        '32801': { lat: 28.5383, lon: -81.3792 }, // Orlando
+        '32803': { lat: 28.5480, lon: -81.3460 }, // Orlando
+        '32804': { lat: 28.5600, lon: -81.3870 }, // Orlando
+        '32805': { lat: 28.5320, lon: -81.4070 }, // Orlando
+        '32806': { lat: 28.5120, lon: -81.3500 }, // Orlando
+        '32807': { lat: 28.5350, lon: -81.3150 }, // Orlando
+        '32808': { lat: 28.5580, lon: -81.3150 }, // Orlando
+        '32809': { lat: 28.4680, lon: -81.3700 }, // Orlando
+        '32810': { lat: 28.6180, lon: -81.3650 }, // Orlando
+        '32811': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32812': { lat: 28.5380, lon: -81.3250 }, // Orlando
+        '32814': { lat: 28.5650, lon: -81.3250 }, // Orlando
+        '32815': { lat: 28.5150, lon: -81.4150 }, // Orlando
+        '32816': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32817': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32818': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32819': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32820': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32821': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32822': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32824': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32825': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32826': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32827': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32828': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32829': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32830': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32831': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32832': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32833': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32834': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32835': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32836': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32837': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        '32839': { lat: 28.5150, lon: -81.4450 }, // Orlando
+        
+        // South Florida - Miami Area
+        '33101': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33102': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33109': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33111': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33114': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33116': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33119': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33122': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33124': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33125': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33126': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33127': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33128': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33129': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33130': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33131': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33132': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33133': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33134': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33135': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33136': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33137': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33138': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33139': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33140': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33141': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33142': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33143': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33144': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33145': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33146': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33147': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33149': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33150': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33151': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33152': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33153': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33154': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33155': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33156': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33157': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33158': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33159': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33160': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33161': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33162': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33163': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33164': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33165': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33166': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33167': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33168': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33169': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33170': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33172': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33173': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33174': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33175': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33176': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33177': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33178': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33179': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33180': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33181': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33182': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33183': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33184': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33185': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33186': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33187': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33188': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33189': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33190': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33193': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33194': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33195': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33196': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33197': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33198': { lat: 25.7617, lon: -80.1918 }, // Miami
+        '33199': { lat: 25.7617, lon: -80.1918 }, // Miami
+        
+        // West Central Florida - Tampa Area
+        '33601': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33602': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33603': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33604': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33605': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33606': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33607': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33608': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33609': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33610': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33611': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33612': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33613': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33614': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33615': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33616': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33617': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33618': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33619': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33620': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33621': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33622': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33623': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33624': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33625': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33626': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33629': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33630': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33631': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33633': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33634': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33635': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33637': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33646': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33647': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33650': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33655': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33660': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33661': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33662': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33663': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33664': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33672': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33673': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33674': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33675': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33677': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33679': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33680': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33681': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33682': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33684': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33685': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33686': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33687': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33688': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33689': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        '33694': { lat: 27.9506, lon: -82.4572 }, // Tampa
+        
+        // North Florida - Jacksonville Area
+        '32201': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32202': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32203': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32204': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32205': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32206': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32207': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32208': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32209': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32210': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32211': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32212': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32216': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32217': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32218': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32219': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32220': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32221': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32222': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32223': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32224': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32225': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32226': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32227': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32228': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32233': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32234': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32244': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32246': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32250': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32254': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32255': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32256': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32257': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32258': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32259': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32260': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32266': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        '32277': { lat: 30.3322, lon: -81.6557 }, // Jacksonville
+        
+        // Other Major Florida Cities
+        '32501': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32502': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32503': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32504': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32505': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32506': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32507': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32508': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32509': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32511': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32512': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32513': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32514': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32516': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32520': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32526': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32534': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32535': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32536': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32537': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32541': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32542': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32544': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32547': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32548': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32559': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32561': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32562': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32563': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32564': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32565': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32566': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32567': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32568': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32569': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32571': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32572': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32577': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32578': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32579': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32580': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32581': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32582': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32583': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32588': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32591': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        '32592': { lat: 30.4213, lon: -87.2169 }, // Pensacola
+        
+        // Tallahassee
+        '32301': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32302': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32303': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32304': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32305': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32306': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32307': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32308': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32309': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32310': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32311': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32312': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32313': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32314': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32315': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32316': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32317': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        '32318': { lat: 30.4518, lon: -84.2807 }, // Tallahassee
+        
+        // Gainesville
+        '32601': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32602': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32603': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32604': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32605': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32606': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32607': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32608': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32609': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32610': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32611': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32612': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32613': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32614': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32615': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32616': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32617': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32618': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32626': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32627': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32628': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32631': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32633': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32634': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32635': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32640': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32641': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32643': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32644': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32648': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32653': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32654': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32655': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32658': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32662': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32663': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32664': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32666': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32667': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32668': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32669': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32671': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32672': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32673': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32675': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32676': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32680': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32681': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32683': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32686': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32692': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32693': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32694': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32696': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        '32697': { lat: 29.6516, lon: -82.3248 }, // Gainesville
+        
+        // Fort Lauderdale
+        '33301': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33302': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33303': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33304': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33305': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33306': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33307': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33308': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33309': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33310': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33311': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33312': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33313': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33314': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33315': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33316': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33317': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33318': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33319': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33320': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33321': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33322': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33323': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33324': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33325': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33326': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33327': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33328': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33329': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33330': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33331': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33332': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33334': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33335': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33336': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33337': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33338': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33339': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33340': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33345': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33346': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33348': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33349': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33351': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33355': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        '33359': { lat: 26.1224, lon: -80.1373 }, // Fort Lauderdale
+        
+        // West Palm Beach
+        '33401': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33402': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33403': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33404': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33405': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33406': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33407': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33408': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33409': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33410': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33411': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33412': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33413': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33414': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33415': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33416': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33417': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33418': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33419': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33420': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33421': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33422': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33423': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33424': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33425': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33426': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33427': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33428': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33429': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33430': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33431': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33432': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33433': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33434': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33435': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33436': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33437': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33438': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33439': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33440': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33441': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33442': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33443': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33444': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33445': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33446': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33447': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33448': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33449': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33454': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33455': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33458': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33459': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33460': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33461': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33462': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33463': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33464': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33465': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33466': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33467': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33468': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33469': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33470': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33471': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33472': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33473': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33474': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33475': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33476': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33477': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33478': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33480': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33481': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33482': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33483': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33484': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33486': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33487': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33488': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33493': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33496': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33497': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33498': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        '33499': { lat: 26.7153, lon: -80.0534 }, // West Palm Beach
+        
+        // St. Petersburg
+        '33701': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33702': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33703': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33704': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33705': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33706': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33707': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33708': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33709': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33710': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33711': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33712': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33713': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33714': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33715': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33716': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33730': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33731': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33732': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33733': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33734': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33736': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33737': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33738': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33740': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33741': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33742': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33743': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33744': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33747': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33755': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33756': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33757': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33758': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33759': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33760': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33761': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33762': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33763': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33764': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33765': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33766': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33767': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33769': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33770': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33771': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33772': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33773': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33774': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33775': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33776': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33777': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33778': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33779': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33780': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33781': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        '33782': { lat: 27.7676, lon: -82.6403 }, // St. Petersburg
+        
+        // Hialeah
+        '33002': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33010': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33011': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33012': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33013': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33014': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33015': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33016': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33017': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33018': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33030': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33031': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33032': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33033': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33034': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33035': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33054': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33055': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33056': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33057': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33058': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33060': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33061': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33062': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33063': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33064': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33065': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33066': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33067': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33068': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33069': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33071': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33072': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33073': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33074': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33075': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33076': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33077': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33081': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33082': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33083': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33084': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33090': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33092': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33093': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33097': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33098': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33125': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33126': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33127': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33128': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33129': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33130': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33131': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33132': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33133': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33134': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33135': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33136': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33137': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33138': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33139': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33140': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33141': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33142': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33143': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33144': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33145': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33146': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33147': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33149': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33150': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33151': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33152': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33153': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33154': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33155': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33156': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33157': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33158': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33159': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33160': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33161': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33162': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33163': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33164': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33165': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33166': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33167': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33168': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33169': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33170': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33172': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33173': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33174': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33175': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33176': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33177': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33178': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33179': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33180': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33181': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33182': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33183': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33184': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33185': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33186': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33187': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33188': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33189': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33190': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33193': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33194': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33195': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33196': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33197': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33198': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        '33199': { lat: 25.8576, lon: -80.2781 }, // Hialeah
+        
+        // Other Major Cities - Keep existing ones
+        '90210': { lat: 34.0901, lon: -118.4065 }, // Beverly Hills, CA
+        '94102': { lat: 37.7749, lon: -122.4194 }, // San Francisco, CA
+        '90001': { lat: 33.9731, lon: -118.2479 }, // Los Angeles, CA
+        '10001': { lat: 40.7505, lon: -73.9934 }, // New York, NY
+        '11201': { lat: 40.6943, lon: -73.9249 }, // Brooklyn, NY
+        '75201': { lat: 32.7767, lon: -96.7970 }, // Dallas, TX
+        '77001': { lat: 29.7604, lon: -95.3698 }, // Houston, TX
+        '60601': { lat: 41.8781, lon: -87.6298 }, // Chicago, IL
+    };
+    
+    return zipCoordinates[zipCode] || null;
 }
 
-// PayPal Integration
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 3959; // Earth's radius in miles
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+
+// PayPal Integration - Use Native PayPal Buttons Only
 function initializePayPalButton() {
-    // Clear any existing PayPal buttons
-    document.getElementById('paypal-button-container').innerHTML = '';
-    
+    // Update modal price
+    const modalPriceElement = document.getElementById('modal-total-price');
+    if (modalPriceElement) {
+        modalPriceElement.textContent = (basePrice + shippingCost).toFixed(2);
+    }
+
+    // Clear container and use ONLY PayPal's native buttons
+    const buttonContainer = document.getElementById('paypal-button-container');
+    if (buttonContainer) {
+        buttonContainer.innerHTML = ''; // Clear any custom buttons
+    }
+
+    // Show PayPal modal
+    const paypalModal = document.getElementById('paypal-modal');
+    if (paypalModal) {
+        paypalModal.style.display = 'flex';
+    }
+
+    // Initialize PayPal's native buttons
+    if (typeof paypal !== 'undefined') {
+        // PayPal Button
     paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                color: 'blue',
+                shape: 'rect',
+                label: 'paypal',
+                height: 50,
+                tagline: false
+            },
         createOrder: function(data, actions) {
-            const paypalFee = basePrice * paypalFeeRate;
-            const shippingCost = parseFloat(document.getElementById('shippingCost').textContent.replace('$', '')) || 0;
-            const total = basePrice + paypalFee + shippingCost;
-            
+                const total = basePrice + shippingCost;
             return actions.order.create({
+                    intent: 'CAPTURE',
                 purchase_units: [{
+                        reference_id: 'SALT_CELL_SHIELD_' + Date.now(),
+                        description: 'Salt Cell Shield - Professional Salt Cell Protection',
                     amount: {
-                        value: total.toFixed(2),
                         currency_code: 'USD',
+                            value: total.toFixed(2),
                         breakdown: {
                             item_total: {
-                                value: basePrice.toFixed(2),
-                                currency_code: 'USD'
+                                    currency_code: 'USD',
+                                    value: basePrice.toFixed(2)
                             },
                             shipping: {
-                                value: shippingCost.toFixed(2),
-                                currency_code: 'USD'
-                            },
-                            handling: {
-                                value: paypalFee.toFixed(2),
-                                currency_code: 'USD'
+                                    currency_code: 'USD',
+                                    value: shippingCost.toFixed(2)
                             }
                         }
                     },
                     items: [{
-                        name: 'Salt Water Pool Cell Shield',
-                        description: 'Professional-grade cell shield for salt water pool systems',
+                            name: 'Salt Cell Shield',
+                            description: 'Professional-grade salt cell shield that protects salt cells from scale buildup and temperature damage.',
                         unit_amount: {
-                            value: basePrice.toFixed(2),
-                            currency_code: 'USD'
+                                currency_code: 'USD',
+                                value: basePrice.toFixed(2)
                         },
                         quantity: '1',
-                        category: 'PHYSICAL_GOODS'
+                            category: 'PHYSICAL_GOODS',
+                            sku: 'SCS-001'
+                        }]
                     }],
-                    shipping: {
-                        name: {
-                            full_name: 'Customer'
-                        },
-                        address: {
-                            country_code: 'US'
-                        }
+                    application_context: {
+                        brand_name: 'SB Pool Engineering',
+                        shipping_preference: 'GET_FROM_FILE'
                     }
-                }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    console.log('PayPal payment completed:', details);
+                    showSuccess('Payment successful! Your order has been processed.');
+                    
+                    const orderData = {
+                        orderID: details.id,
+                        payerID: details.payer.payer_id,
+                        email: details.payer.email_address,
+                        name: details.payer.name.given_name + ' ' + details.payer.name.surname,
+                        amount: details.purchase_units[0].payments.captures[0].amount.value,
+                        currency: details.purchase_units[0].payments.captures[0].amount.currency_code,
+                        timestamp: new Date().toISOString(),
+                        status: details.purchase_units[0].payments.captures[0].status
+                    };
+                    
+                    localStorage.setItem('lastOrder', JSON.stringify(orderData));
+                    
+                    setTimeout(() => {
+                        closeProductModal();
+                    }, 2000);
+                });
+            },
+            onError: function(err) {
+                console.error('PayPal error:', err);
+                showError('An error occurred during payment. Please try again.');
+            }
+        }).render('#paypal-button-container');
+
+        // Venmo Button (if available)
+        if (paypal.FUNDING.VENMO) {
+            paypal.Buttons({
+                fundingSource: paypal.FUNDING.VENMO,
+                style: {
+                    layout: 'vertical',
+                    color: 'blue',
+                    shape: 'rect',
+                    label: 'venmo',
+                    height: 50,
+                    tagline: false
+                },
+                createOrder: function(data, actions) {
+                    const total = basePrice + shippingCost;
+                    return actions.order.create({
+                        intent: 'CAPTURE',
+                        purchase_units: [{
+                            reference_id: 'SALT_CELL_SHIELD_' + Date.now(),
+                            description: 'Salt Cell Shield - Professional Salt Cell Protection',
+                            amount: {
+                                currency_code: 'USD',
+                                value: total.toFixed(2),
+                                breakdown: {
+                                    item_total: {
+                                        currency_code: 'USD',
+                                        value: basePrice.toFixed(2)
+                                    },
+                                    shipping: {
+                                        currency_code: 'USD',
+                                        value: shippingCost.toFixed(2)
+                                    }
+                                }
+                            },
+                            items: [{
+                                name: 'Salt Cell Shield',
+                                description: 'Professional-grade salt cell shield that protects salt cells from scale buildup and temperature damage.',
+                                unit_amount: {
+                                    currency_code: 'USD',
+                                    value: basePrice.toFixed(2)
+                                },
+                                quantity: '1',
+                                category: 'PHYSICAL_GOODS',
+                                sku: 'SCS-001'
+                            }]
+                        }],
+                        application_context: {
+                            brand_name: 'SB Pool Engineering',
+                            shipping_preference: 'GET_FROM_FILE'
+                        }
             });
         },
         onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
-                // Show success message
-                alert('Payment successful! Order ID: ' + details.id);
-                console.log('Payment completed:', details);
-                
-                // Here you would typically send the order details to your server
-                // sendOrderToServer(details);
+                        console.log('Venmo payment completed:', details);
+                        showSuccess('Payment successful! Your order has been processed.');
+                        
+                        const orderData = {
+                            orderID: details.id,
+                            payerID: details.payer.payer_id,
+                            email: details.payer.email_address,
+                            name: details.payer.name.given_name + ' ' + details.payer.name.surname,
+                            amount: details.purchase_units[0].payments.captures[0].amount.value,
+                            currency: details.purchase_units[0].payments.captures[0].amount.currency_code,
+                            timestamp: new Date().toISOString(),
+                            status: details.purchase_units[0].payments.captures[0].status
+                        };
+                        
+                        localStorage.setItem('lastOrder', JSON.stringify(orderData));
+                        
+                        setTimeout(() => {
+                            closeProductModal();
+                        }, 2000);
             });
         },
         onError: function(err) {
-            console.error('PayPal error:', err);
-            alert('Payment failed. Please try again.');
-        },
-        onCancel: function(data) {
-            console.log('Payment cancelled:', data);
+                    console.error('Venmo error:', err);
+                    showError('An error occurred during payment. Please try again.');
+                }
+            }).render('#paypal-button-container');
+        }
+
+        // Card Button (Guest Checkout - the one you want!)
+        if (paypal.FUNDING.CARD) {
+            paypal.Buttons({
+                fundingSource: paypal.FUNDING.CARD,
+                style: {
+                    layout: 'vertical',
+                    color: 'black',
+                    shape: 'rect',
+                    label: 'pay',
+                    height: 50,
+                    tagline: false
+                },
+                createOrder: function(data, actions) {
+                    const total = basePrice + shippingCost;
+                    return actions.order.create({
+                        intent: 'CAPTURE',
+                        purchase_units: [{
+                            reference_id: 'SALT_CELL_SHIELD_' + Date.now(),
+                            description: 'Salt Cell Shield - Professional Salt Cell Protection',
+                            amount: {
+                                currency_code: 'USD',
+                                value: total.toFixed(2),
+                                breakdown: {
+                                    item_total: {
+                                        currency_code: 'USD',
+                                        value: basePrice.toFixed(2)
+                                    },
+                                    shipping: {
+                                        currency_code: 'USD',
+                                        value: shippingCost.toFixed(2)
+                                    }
+                                }
+                            },
+                            items: [{
+                                name: 'Salt Cell Shield',
+                                description: 'Professional-grade salt cell shield that protects salt cells from scale buildup and temperature damage.',
+                                unit_amount: {
+                                    currency_code: 'USD',
+                                    value: basePrice.toFixed(2)
+                                },
+                                quantity: '1',
+                                category: 'PHYSICAL_GOODS',
+                                sku: 'SCS-001'
+                            }]
+                        }],
+                        application_context: {
+                            brand_name: 'SB Pool Engineering',
+                            shipping_preference: 'GET_FROM_FILE'
+                        }
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        console.log('Card payment completed:', details);
+                        showSuccess('Payment successful! Your order has been processed.');
+                        
+                        const orderData = {
+                            orderID: details.id,
+                            payerID: details.payer.payer_id,
+                            email: details.payer.email_address,
+                            name: details.payer.name.given_name + ' ' + details.payer.name.surname,
+                            amount: details.purchase_units[0].payments.captures[0].amount.value,
+                            currency: details.purchase_units[0].payments.captures[0].amount.currency_code,
+                            timestamp: new Date().toISOString(),
+                            status: details.purchase_units[0].payments.captures[0].status
+                        };
+                        
+                        localStorage.setItem('lastOrder', JSON.stringify(orderData));
+                        
+                        setTimeout(() => {
+                            closeProductModal();
+                        }, 2000);
+                    });
+                },
+                onError: function(err) {
+                    console.error('Card payment error:', err);
+                    showError('An error occurred during payment. Please try again.');
         }
     }).render('#paypal-button-container');
+        }
+    }
 }
+
+
+// Close PayPal Modal
+function closePayPalModal() {
+    const paypalModal = document.getElementById('paypal-modal');
+    if (paypalModal) {
+        paypalModal.style.display = 'none';
+    }
+}
+
+// Add click outside to close modal
+document.addEventListener('click', function(e) {
+    const paypalModal = document.getElementById('paypal-modal');
+    
+    if (paypalModal && paypalModal.style.display === 'flex' && e.target === paypalModal) {
+        closePayPalModal();
+    }
+});
 
 // Form validation
 function validateZipCode(zipCode) {
@@ -273,19 +1367,6 @@ function validateZipCode(zipCode) {
 
 // Add event listener for ZIP code input
 document.addEventListener('DOMContentLoaded', function() {
-    const zipInput = document.getElementById('zipCode');
-    if (zipInput) {
-        zipInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                calculateShipping();
-            }
-        });
-        
-        zipInput.addEventListener('input', function(e) {
-            // Only allow numbers
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
-    }
 });
 
 // Navbar scroll effect
@@ -426,20 +1507,134 @@ document.addEventListener('touchend', function (event) {
     lastTouchEnd = now;
 }, false);
 
+// Download Installation Guide Function
+function downloadInstallationGuide() {
+    const guideUrl = 'Cell_Shield_Installation_Guide.pdf';
+    
+    // Create a temporary link element and trigger download
+    const link = document.createElement('a');
+    link.href = guideUrl;
+    link.download = 'Cell_Shield_Installation_Guide.pdf';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showSuccess('Installation guide download started!');
+}
+
 // Open Performance Report Function
 function openPerformanceReport() {
-    // URL for the performance report PDF
-    const reportUrl = 'Cell_Shield_Performance_Report.pdf';
+    // URLs for both performance report PDFs
+    const reportUrl1 = 'Salt Cell Shield Performance Analysis.pdf';
+    const reportUrl2 = 'Salt_Cell_Shield_Performance_Report.pdf';
     
-    // Open the PDF in a new tab
-    const newWindow = window.open(reportUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    // Create HTML content with both PDFs embedded
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Cell Shield Performance Reports</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 20px;
+                    background: #f8fafc;
+                    font-family: 'Inter', sans-serif;
+                }
+                .report-container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 16px;
+                    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.1);
+                    overflow: hidden;
+                }
+                .report-header {
+                    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+                    color: white;
+                    padding: 2rem;
+                    text-align: center;
+                }
+                .report-header h1 {
+                    margin: 0;
+                    font-size: 2rem;
+                    font-weight: 700;
+                }
+                .report-header p {
+                    margin: 0.5rem 0 0 0;
+                    opacity: 0.9;
+                }
+                .pdf-container {
+                    width: 100%;
+                    height: 80vh;
+                    border: none;
+                    display: block;
+                }
+                .pdf-section {
+                    margin-bottom: 2rem;
+                }
+                .pdf-section:last-child {
+                    margin-bottom: 0;
+                }
+                .pdf-title {
+                    padding: 1rem 2rem;
+                    background: #f8fafc;
+                    border-bottom: 2px solid #e5e7eb;
+                    color: #1e3a8a;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                }
+                @media (max-width: 768px) {
+                    body {
+                        padding: 10px;
+                    }
+                    .report-header {
+                        padding: 1.5rem;
+                    }
+                    .report-header h1 {
+                        font-size: 1.5rem;
+                    }
+                    .pdf-title {
+                        padding: 0.75rem 1rem;
+                        font-size: 1rem;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="report-container">
+                <div class="report-header">
+                    <h1>Cell Shield Performance Reports</h1>
+                    <p>Comprehensive analysis and statistical modeling</p>
+                </div>
+                <div class="pdf-section">
+                    <div class="pdf-title">Salt Cell Shield Performance Analysis</div>
+                    <iframe src="${reportUrl1}" class="pdf-container"></iframe>
+                </div>
+                <div class="pdf-section">
+                    <div class="pdf-title">Salt Cell Shield Performance Report</div>
+                    <iframe src="${reportUrl2}" class="pdf-container"></iframe>
+                </div>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    // Create a new window with the HTML content
+    const newWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
     
     if (newWindow) {
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+        
         // Show success message
-        showSuccess('Performance report opened in new tab!');
+        showSuccess('Both performance reports opened in new tab!');
     } else {
         // Fallback if popup is blocked
-        alert('Please allow popups for this site to view the performance report, or try again.');
+        alert('Please allow popups for this site to view the performance reports, or try again.');
     }
 }
 
