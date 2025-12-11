@@ -60,6 +60,8 @@ body {
     height: 50px;
     width: auto;
     filter: drop-shadow(0 2px 8px rgba(30, 58, 138, 0.3));
+    background: transparent;
+    background-color: transparent;
 }
 
 .nav-logo h2 {
@@ -247,6 +249,8 @@ body {
     width: auto;
     filter: drop-shadow(0 8px 32px rgba(255, 255, 255, 0.4));
     animation: logoGlow 3s ease-in-out infinite alternate;
+    background: transparent;
+    background-color: transparent;
 }
 
 @keyframes logoGlow {
@@ -427,6 +431,47 @@ body {
     font-weight: 600;
     margin-top: 1rem;
     line-height: 1.6;
+}
+
+/* Product Content Section */
+.product-content {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.product-content h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+    line-height: 1.3;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.product-content h3:first-child {
+    margin-top: 0;
+}
+
+.product-content p {
+    font-size: 1.0625rem;
+    color: #2d3748;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+}
+
+.product-content p:last-child {
+    margin-bottom: 0;
 }
 
 .product-card {
@@ -3913,6 +3958,23 @@ body {
         box-sizing: border-box;
     }
 
+    .product-content {
+        padding: 1.25rem;
+        margin: 0 15px 1.5rem;
+        border-radius: 12px;
+    }
+    
+    .product-content h3 {
+        font-size: 1.375rem;
+        margin-top: 1.25rem;
+    }
+    
+    .product-content p {
+        font-size: 0.95rem;
+        line-height: 1.65;
+        margin-bottom: 1rem;
+    }
+
     .product-card {
         padding: 1.5rem;
         margin: 0 15px;
@@ -5176,6 +5238,27 @@ input:focus {
     /* Product Section */
     .product-section {
         padding: 3rem 0;
+    }
+    
+    .product-content {
+        padding: 1.5rem;
+        margin: 0 auto 2rem;
+        border-radius: 12px;
+    }
+    
+    .product-content h3 {
+        font-size: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .product-content h3:first-child {
+        margin-top: 0;
+    }
+    
+    .product-content p {
+        font-size: 1rem;
+        line-height: 1.7;
+        margin-bottom: 1.25rem;
     }
     
     .product-card {
