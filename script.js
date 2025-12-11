@@ -81,8 +81,8 @@ function openProductModal() {
     calculatedShipping = false;
     shippingCost = 0;
     
-    // Clear zip code input
-    const zipCodeInput = document.getElementById('zipCode');
+    // Clear zip code input in modal
+    const zipCodeInput = document.getElementById('modalZipCode');
     if (zipCodeInput) {
         zipCodeInput.value = '';
     }
@@ -138,6 +138,35 @@ function closeProductModal() {
     const modal = document.getElementById('productModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+    
+    // Reset shipping calculator state
+    const zipCodeInput = document.getElementById('modalZipCode');
+    if (zipCodeInput) {
+        zipCodeInput.value = '';
+    }
+    
+    // Reset calculate button to original state
+    const calculateBtn = document.getElementById('calculateShippingBtn');
+    if (calculateBtn) {
+        calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate Shipping';
+        calculateBtn.disabled = false;
+    }
+    
+    // Hide shipping result
+    const shippingResult = document.getElementById('shippingResult');
+    if (shippingResult) {
+        shippingResult.style.display = 'none';
+    }
+    
+    // Hide PayPal section
+    const paypalSection = document.getElementById('paypalSection');
+    if (paypalSection) {
+        paypalSection.style.display = 'none';
+    }
+    
+    // Reset shipping state variables
+    calculatedShipping = false;
+    shippingCost = 0;
 }
 
 // Close modal when clicking outside of it
@@ -201,7 +230,7 @@ let calculatedShipping = false;
 function calculateShipping() {
     console.log('Calculate Shipping button clicked!');
     
-    const zipCodeInput = document.getElementById('zipCode');
+    const zipCodeInput = document.getElementById('modalZipCode');
     if (!zipCodeInput) {
         console.error('Zip code input element not found!');
         return;
@@ -1978,16 +2007,16 @@ function calculateSavings(brand, zipCode, cellAge) {
     const savingsPerReplacement = replacementCost * replacementFrequencyReduction * 0.5; // 50% of frequency reduction value
     
     // Calculate total savings over 10 years
-    // Assume cells are replaced every standardLifespan years without shield
-    const yearsToCalculate = 10;
-    const replacementsWithoutShield = Math.ceil(yearsToCalculate / standardLifespan);
-    const replacementsWithShield = Math.ceil(yearsToCalculate / futureLifespan);
-    const replacementsAvoided = Math.max(0, replacementsWithoutShield - replacementsWithShield);
-    const futureSavingsTotal = replacementsAvoided * replacementCost * 0.7; // 70% of avoided replacement cost
+    // Total = savings on current cell + (savings per replacement * 3 future replacements)
+    const futureSavingsTotal = savingsPerReplacement * 3; // 3 more replacements over 10 years
     
     const totalSavings = firstCellSavings + futureSavingsTotal;
     const shieldCost = 199;
     const netSavings = totalSavings - shieldCost;
+    
+    // Calculate replacements with shield for display purposes
+    const yearsToCalculate = 10;
+    const replacementsWithShield = Math.ceil(yearsToCalculate / futureLifespan);
     
     return {
         extendedLife: additionalLife.toFixed(1),
@@ -2031,32 +2060,39 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.stopPropagation();
             
-            const brand = document.getElementById('cellBrand').value;
-            const zipCode = document.getElementById('zipCode').value;
-            const cellAge = parseFloat(document.getElementById('cellAge').value);
-            
-            if (!brand || !zipCode || isNaN(cellAge)) {
-                alert('Please fill in all fields correctly.');
-                return;
-            }
-            
-            const results = calculateSavings(brand, zipCode, cellAge);
-            
-            if (results) {
-                document.getElementById('firstCellSavings').textContent = `$${results.firstCellSavings}`;
-                document.getElementById('futureCellSavings').textContent = `$${results.futureCellSavings} per replacement`;
-                document.getElementById('totalSavings').textContent = `$${results.totalSavings}`;
+            try {
+                const brand = document.getElementById('cellBrand').value;
+                const zipCode = document.getElementById('savingsZipCode').value;
+                const cellAge = parseFloat(document.getElementById('cellAge').value);
                 
-                // Update description with context
-                const totalDesc = document.getElementById('totalSavingsDescription');
-                if (results.replacementsIn10Years > 0) {
-                    totalDesc.textContent = `Combined savings from your current cell and ${results.replacementsIn10Years} future replacement${results.replacementsIn10Years > 1 ? 's' : ''} over the next 10 years.`;
-                } else {
-                    totalDesc.textContent = `Combined savings from your current cell over the next 10 years.`;
+                if (!brand || !zipCode || isNaN(cellAge)) {
+                    alert('Please fill in all fields correctly.');
+                    return;
                 }
                 
-                resultsDiv.style.display = 'block';
-                resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                const results = calculateSavings(brand, zipCode, cellAge);
+                
+                if (results) {
+                    document.getElementById('firstCellSavings').textContent = `$${results.firstCellSavings}`;
+                    document.getElementById('futureCellSavings').textContent = `$${results.futureCellSavings} per replacement`;
+                    document.getElementById('totalSavings').textContent = `$${results.totalSavings}`;
+                    
+                    // Update description with context
+                    const totalDesc = document.getElementById('totalSavingsDescription');
+                    if (results.replacementsIn10Years > 0) {
+                        totalDesc.textContent = `Combined savings from your current cell and ${results.replacementsIn10Years} future replacement${results.replacementsIn10Years > 1 ? 's' : ''} over the next 10 years.`;
+                    } else {
+                        totalDesc.textContent = `Combined savings from your current cell over the next 10 years.`;
+                    }
+                    
+                    resultsDiv.style.display = 'block';
+                    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    alert('Unable to calculate savings. Please check your inputs and try again.');
+                }
+            } catch (error) {
+                console.error('Error calculating savings:', error);
+                alert('An error occurred while calculating savings. Please try again.');
             }
         });
     }
