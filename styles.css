@@ -180,14 +180,27 @@ body {
 }
 
 .hero-title {
-    font-size: 3.75rem;
-    font-weight: 700;
+    font-size: 4.5rem;
+    font-weight: 600;
     margin-bottom: 1.5rem;
     line-height: 1.1;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     color: white;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: -0.025em;
+    font-family: 'Dancing Script', cursive;
+    letter-spacing: 0.02em;
+    animation: wave 3s ease-in-out infinite;
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-1deg);
+    }
+    75% {
+        transform: rotate(1deg);
+    }
 }
 
 @keyframes titleGlow {
@@ -202,12 +215,16 @@ body {
 .hero-subtitle {
     font-size: 1.125rem;
     margin-bottom: 2.5rem;
-    opacity: 0.9;
+    opacity: 0.95;
     line-height: 1.7;
     color: white;
-    font-weight: 400;
+    font-weight: 600;
     max-width: 600px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle strong {
+    font-weight: 700;
 }
 
 .hero-buttons {
@@ -245,12 +262,22 @@ body {
 }
 
 .hero-main-logo {
-    height: 200px;
+    height: 350px;
     width: auto;
+    max-width: 450px;
     filter: drop-shadow(0 8px 32px rgba(255, 255, 255, 0.4));
-    animation: logoGlow 3s ease-in-out infinite alternate;
+    animation: logoRotate 8s linear infinite, logoGlow 3s ease-in-out infinite alternate;
     background: transparent;
     background-color: transparent;
+}
+
+@keyframes logoRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes logoGlow {
@@ -361,6 +388,49 @@ body {
     border-color: #cbd5e0;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-buy-now {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: 2px solid #10b981;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    font-weight: 700;
+    font-size: 1.125rem;
+    padding: 1rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.btn-buy-now::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.btn-buy-now:hover::before {
+    left: 100%;
+}
+
+.btn-buy-now:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+    }
 }
 
 /* Product Section */
@@ -474,6 +544,91 @@ body {
     margin-bottom: 0;
 }
 
+/* Conversation Style */
+.product-content.conversation-style {
+    padding: 2rem;
+    background: #f8fafc;
+    border-radius: 20px;
+}
+
+.message-bubble {
+    margin-bottom: 1.5rem;
+    max-width: 85%;
+    animation: slideIn 0.4s ease-out;
+}
+
+.message-bubble:last-child {
+    margin-bottom: 0;
+}
+
+.message-bubble.question {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.message-bubble.answer {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.message-bubble.highlight {
+    border-left: 4px solid #10b981;
+}
+
+.message-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    color: #64748b;
+}
+
+.message-bubble.question .message-header {
+    color: #3b82f6;
+}
+
+.message-bubble.answer .message-header {
+    color: #10b981;
+}
+
+.message-text {
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #1e293b;
+    font-weight: 400;
+}
+
+.message-bubble.question .message-text {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-top-left-radius: 4px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.message-bubble.answer .message-text {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border-top-right-radius: 4px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.message-bubble.highlight .message-text {
+    background: linear-gradient(135deg, #d1fae5 0%, #86efac 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .product-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
     border-radius: 20px;
@@ -481,12 +636,12 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.06);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: center;
+    grid-template-columns: 280px 1fr;
+    gap: 2.5rem;
+    align-items: start;
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     z-index: 1;
@@ -537,12 +692,16 @@ body {
 .product-image {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    position: sticky;
+    top: 2rem;
 }
 
 .product-main-image {
-    width: 220px;
-    height: 220px;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    aspect-ratio: 1;
     border-radius: 20px;
     object-fit: cover;
     box-shadow: 0 12px 35px rgba(30, 58, 138, 0.25), 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -560,17 +719,23 @@ body {
     margin-bottom: 1rem;
 }
 
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
     .product-info h3 {
         font-size: 1.75rem;
         font-weight: 700;
         color: #1a202c;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
         line-height: 1.3;
         word-wrap: break-word;
         hyphens: none;
         white-space: normal;
-        text-align: center;
-        padding: 0 10px;
+        text-align: left;
+        padding: 0;
         box-sizing: border-box;
         font-family: 'Inter', sans-serif;
         letter-spacing: -0.025em;
@@ -578,15 +743,15 @@ body {
 
     .product-description {
         color: #4a5568;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0;
         line-height: 1.7;
         font-size: 1rem;
         font-weight: 400;
         word-wrap: break-word;
         hyphens: none;
         white-space: normal;
-        text-align: center;
-        padding: 0 10px;
+        text-align: left;
+        padding: 0;
         box-sizing: border-box;
     }
 
@@ -614,6 +779,268 @@ body {
 .product-btn {
     width: 100%;
     text-align: center;
+}
+
+/* Savings Calculator */
+.savings-calculator {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+}
+
+.savings-calculator h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.calculator-disclaimer {
+    font-size: 0.875rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.calculator-disclaimer strong {
+    color: #92400e;
+    font-weight: 600;
+}
+
+#savingsCalculatorForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.calculator-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.calculator-field label {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.95rem;
+}
+
+.calculator-field select,
+.calculator-field input {
+    padding: 0.875rem 1rem;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.calculator-field select:focus,
+.calculator-field input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.calculator-field small {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: -0.25rem;
+}
+
+.calculator-submit {
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+.calculator-results {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    border: 2px solid #10b981;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+    animation: slideIn 0.5s ease-out;
+}
+
+.result-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.result-header h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #059669;
+    margin: 0 0 1rem 0;
+}
+
+.results-disclaimer {
+    font-size: 0.8125rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 1rem 0 0 0;
+    padding: 0.875rem;
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    border-radius: 6px;
+    text-align: left;
+}
+
+.results-disclaimer i {
+    color: #f59e0b;
+    margin-right: 0.5rem;
+}
+
+.results-disclaimer strong {
+    color: #92400e;
+    font-weight: 600;
+}
+
+.savings-section {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    background: #f9fafb;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.savings-section:hover {
+    background: #f3f4f6;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.savings-section.highlight {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 2px solid #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.savings-section.first-cell {
+    border-left: 4px solid #3b82f6;
+}
+
+.savings-section.future-cells {
+    border-left: 4px solid #8b5cf6;
+}
+
+.savings-section.total-savings {
+    border-left: 4px solid #10b981;
+}
+
+.savings-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.savings-section.first-cell .savings-icon {
+    color: #3b82f6;
+}
+
+.savings-section.future-cells .savings-icon {
+    color: #8b5cf6;
+}
+
+.savings-section.total-savings .savings-icon {
+    color: #10b981;
+}
+
+.savings-icon i {
+    font-size: 1.5rem;
+}
+
+.savings-content {
+    flex: 1;
+}
+
+.savings-content h5 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.savings-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #059669;
+    margin: 0.5rem 0;
+    line-height: 1.2;
+}
+
+.savings-section.first-cell .savings-amount {
+    color: #2563eb;
+}
+
+.savings-section.future-cells .savings-amount {
+    color: #7c3aed;
+}
+
+.savings-section.total-savings .savings-amount {
+    font-size: 2.5rem;
+    color: #047857;
+}
+
+.savings-description {
+    font-size: 0.9375rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0.5rem 0 0 0;
+}
+
+.warranty-note {
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+    margin-top: 1.5rem;
+}
+
+.warranty-note i {
+    font-size: 1.5rem;
+    color: #3b82f6;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.warranty-note p {
+    margin: 0;
+    color: #1e293b;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.warranty-note strong {
+    color: #1e3a8a;
+    font-weight: 700;
 }
 
 /* About Section */
@@ -3680,7 +4107,8 @@ body {
 
     .hero-main-logo {
         height: 180px;
-        animation: logoFloat 3s ease-in-out infinite;
+        max-width: 250px;
+        animation: logoRotate 8s linear infinite, logoFloat 3s ease-in-out infinite;
     }
 
     @keyframes logoFloat {
@@ -3705,6 +4133,25 @@ body {
         max-width: calc(100vw - 30px);
         box-sizing: border-box;
         overflow: hidden;
+    }
+    
+    .product-image {
+        position: static;
+        justify-content: center;
+    }
+    
+    .product-main-image {
+        max-width: 250px;
+        width: 100%;
+    }
+    
+    .product-info {
+        text-align: center;
+    }
+    
+    .product-info h3,
+    .product-description {
+        text-align: center;
     }
 
     .product-main-image {
@@ -3924,7 +4371,8 @@ body {
 
     .hero-main-logo {
         height: 140px;
-        animation: logoPulse 2s ease-in-out infinite;
+        max-width: 200px;
+        animation: logoRotate 8s linear infinite, logoPulse 2s ease-in-out infinite;
     }
 
     @keyframes logoPulse {
@@ -3975,19 +4423,115 @@ body {
         margin-bottom: 1rem;
     }
 
+    .product-content.conversation-style {
+        padding: 1rem;
+    }
+    
+    .message-bubble {
+        max-width: 92%;
+    }
+    
+    .message-text {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .savings-calculator {
+        padding: 1.25rem;
+        margin: 1.25rem 0;
+    }
+    
+    .savings-calculator h4 {
+        font-size: 1.125rem;
+    }
+    
+    .calculator-disclaimer {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+    }
+    
+    .results-disclaimer {
+        font-size: 0.6875rem;
+        padding: 0.625rem;
+    }
+    
+    .calculator-results {
+        padding: 1.25rem;
+    }
+    
+    .savings-section {
+        padding: 1rem;
+        gap: 0.875rem;
+    }
+    
+    .savings-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .savings-icon i {
+        font-size: 1.25rem;
+    }
+    
+    .savings-amount {
+        font-size: 1.5rem;
+    }
+    
+    .savings-section.total-savings .savings-amount {
+        font-size: 1.75rem;
+    }
+    
+    .savings-content h5 {
+        font-size: 0.9375rem;
+    }
+    
+    .savings-description {
+        font-size: 0.8125rem;
+    }
+    
+    .warranty-note {
+        padding: 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .btn-buy-now {
+        font-size: 0.95rem;
+        padding: 0.75rem 1.75rem;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
     .product-card {
+        grid-template-columns: 1fr;
         padding: 1.5rem;
         margin: 0 15px;
-        gap: 1.5rem;
+        gap: 1.25rem;
         border-radius: 16px;
         box-shadow: 0 12px 35px rgba(30, 58, 138, 0.12), 0 4px 15px rgba(0, 0, 0, 0.08);
     }
-
+    
+    .product-image {
+        position: static;
+    }
+    
     .product-main-image {
-        width: 200px;
-        height: 200px;
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        aspect-ratio: 1;
         border-radius: 12px;
         box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
+    }
+    
+    .product-info {
+        text-align: center;
+    }
+    
+    .product-info h3,
+    .product-description {
+        text-align: center;
     }
 
     .btn {
@@ -5123,6 +5667,8 @@ input:focus {
     
     .hero-main-logo {
         height: 120px;
+        max-width: 150px;
+        animation: logoRotate 8s linear infinite;
     }
     
     .hero-buttons {
@@ -5176,6 +5722,8 @@ input:focus {
     .hero-main-logo {
         height: 180px;
         width: auto;
+        max-width: 250px;
+        animation: logoRotate 8s linear infinite;
     }
     
     .hero-title {
@@ -5246,6 +5794,69 @@ input:focus {
         border-radius: 12px;
     }
     
+    .product-content.conversation-style {
+        padding: 1.25rem;
+    }
+    
+    .savings-calculator {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .savings-calculator h4 {
+        font-size: 1.25rem;
+    }
+    
+    .calculator-disclaimer {
+        font-size: 0.8125rem;
+        padding: 0.875rem;
+    }
+    
+    .results-disclaimer {
+        font-size: 0.75rem;
+        padding: 0.75rem;
+    }
+    
+    .calculator-results {
+        padding: 1.5rem;
+    }
+    
+    .savings-section {
+        flex-direction: column;
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+    
+    .savings-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .savings-amount {
+        font-size: 1.75rem;
+    }
+    
+    .savings-section.total-savings .savings-amount {
+        font-size: 2rem;
+    }
+    
+    .savings-content h5 {
+        font-size: 1rem;
+    }
+    
+    .savings-description {
+        font-size: 0.875rem;
+    }
+    
+    .message-bubble {
+        max-width: 90%;
+    }
+    
+    .message-text {
+        padding: 0.875rem 1rem;
+        font-size: 0.95rem;
+    }
+    
     .product-content h3 {
         font-size: 1.5rem;
         margin-top: 1.5rem;
@@ -5261,29 +5872,50 @@ input:focus {
         margin-bottom: 1.25rem;
     }
     
+    .btn-buy-now {
+        font-size: 1rem;
+        padding: 0.875rem 2rem;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+    
     .product-card {
+        grid-template-columns: 1fr;
         flex-direction: column;
         padding: 1.5rem;
+        gap: 1.25rem;
     }
     
     .product-image {
         width: 100%;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0;
+        position: static;
+        justify-content: center;
     }
     
     .product-main-image {
-        width: 200px;
-        height: 200px;
+        width: 100%;
+        max-width: 220px;
+        height: auto;
+        aspect-ratio: 1;
         margin: 0 auto;
     }
     
     .product-info {
         width: 100%;
         text-align: center;
+        gap: 1.25rem;
     }
     
     .product-info h3 {
         font-size: 1.5rem;
+        text-align: center;
+    }
+    
+    .product-description {
+        text-align: center;
     }
     
     .product-description {
@@ -5505,6 +6137,8 @@ input:focus {
     
     .hero-main-logo {
         height: 150px;
+        max-width: 200px;
+        animation: logoRotate 8s linear infinite;
     }
     
     .hero-title {
@@ -5715,6 +6349,8 @@ input:focus {
     
     .hero-main-logo {
         height: 130px;
+        max-width: 180px;
+        animation: logoRotate 8s linear infinite;
     }
     
     .hero-title {
@@ -5850,6 +6486,8 @@ input:focus {
     
     .hero-main-logo {
         height: 110px;
+        max-width: 150px;
+        animation: logoRotate 8s linear infinite;
     }
     
     .hero-title {

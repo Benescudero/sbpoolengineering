@@ -1143,7 +1143,7 @@ function initializePayPalButton() {
                         }]
                     }],
                     application_context: {
-                        brand_name: 'SB Pool Engineering',
+                        brand_name: 'Shield Bearer 3D',
                         shipping_preference: 'GET_FROM_FILE'
                     }
                 });
@@ -1223,7 +1223,7 @@ function initializePayPalButton() {
                             }]
                         }],
                         application_context: {
-                            brand_name: 'SB Pool Engineering',
+                            brand_name: 'Shield Bearer 3D',
                             shipping_preference: 'GET_FROM_FILE'
                         }
             });
@@ -1304,7 +1304,7 @@ function initializePayPalButton() {
                             }]
                         }],
                         application_context: {
-                            brand_name: 'SB Pool Engineering',
+                            brand_name: 'Shield Bearer 3D',
                             shipping_preference: 'GET_FROM_FILE'
                         }
                     });
@@ -1751,7 +1751,7 @@ function downloadInstallationGuide() {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('SB Pool Engineering website loaded successfully');
+    console.log('Shield Bearer 3D website loaded successfully');
     
     // Add touch support
     addTouchSupport();
@@ -1868,12 +1868,208 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
 });
 
+// Savings Calculator
+// Salt cell brand data - typical lifespans and replacement costs
+const saltCellData = {
+    hayward: { baseLifespan: 4, replacementCost: 900, name: 'Hayward' },
+    pentair: { baseLifespan: 4.5, replacementCost: 950, name: 'Pentair' },
+    jandy: { baseLifespan: 4, replacementCost: 850, name: 'Jandy' },
+    circupool: { baseLifespan: 3.5, replacementCost: 700, name: 'CircuPool' },
+    intellichlor: { baseLifespan: 4.5, replacementCost: 1000, name: 'IntelliChlor' },
+    other: { baseLifespan: 4, replacementCost: 850, name: 'Other Brand' }
+};
+
+// Hard water regions by zip code ranges (simplified - using general US regions)
+function getHardWaterLevel(zipCode) {
+    const zip = parseInt(zipCode);
+    if (isNaN(zip)) return 1; // Default moderate
+    
+    // Florida, Texas, Arizona, Nevada, California - Very hard water
+    if ((zip >= 32000 && zip <= 34999) || // Florida
+        (zip >= 75000 && zip <= 79999) || // Texas
+        (zip >= 85000 && zip <= 86999) || // Arizona
+        (zip >= 89000 && zip <= 89999) || // Nevada
+        (zip >= 90000 && zip <= 96999)) { // California
+        return 1.4; // Very hard - 40% faster degradation
+    }
+    
+    // Southeast, Southwest - Hard water
+    if ((zip >= 30000 && zip <= 31999) || // Georgia
+        (zip >= 35000 && zip <= 36999) || // Alabama
+        (zip >= 70000 && zip <= 74999) || // Louisiana
+        (zip >= 29000 && zip <= 29999)) { // South Carolina
+        return 1.25; // Hard - 25% faster degradation
+    }
+    
+    // Midwest - Moderate to hard
+    if ((zip >= 40000 && zip <= 49999) || // Kentucky, etc
+        (zip >= 50000 && zip <= 59999) || // Iowa, etc
+        (zip >= 60000 && zip <= 69999)) { // Illinois, etc
+        return 1.15; // Moderate-hard - 15% faster degradation
+    }
+    
+    // Default moderate
+    return 1.1; // Moderate - 10% faster degradation
+}
+
+// Calculate extended life and savings
+function calculateSavings(brand, zipCode, cellAge) {
+    const cellInfo = saltCellData[brand];
+    if (!cellInfo) return null;
+    
+    const hardWaterFactor = getHardWaterLevel(zipCode);
+    const baseLifespan = cellInfo.baseLifespan;
+    const replacementCost = cellInfo.replacementCost;
+    
+    // Calculate remaining life without Cell Shield
+    // Degradation is faster in hard water areas
+    const adjustedLifespan = baseLifespan / hardWaterFactor;
+    const remainingLife = Math.max(0, adjustedLifespan - cellAge);
+    
+    // Cell Shield benefits based on field data:
+    // - 10°F temperature reduction when pool not running
+    // - Reduced scale formation (helps reduce calcium buildup)
+    // - UV protection
+    // Based on data: "Every 10°F increase reduces lifespan by 15-20%"
+    // So 10°F reduction may extend life by approximately 15-20%
+    // Combined with scale reduction benefits, estimate 20-30% life extension
+    const shieldBenefit = 1.25; // 25% extension factor (conservative based on field data)
+    
+    // Calculate extended life with Cell Shield
+    // Field studies suggest 1-2 years additional life in typical conditions
+    // But this varies based on remaining cell life and conditions
+    const maxAdditionalLife = 1.5; // Maximum additional years from field data
+    const additionalLife = Math.min(remainingLife * 0.25, maxAdditionalLife); // 25% extension, capped at 1.5 years
+    const extendedLife = remainingLife + additionalLife;
+    
+    // Calculate savings on current cell
+    // Savings = cost of replacement delayed by the additional life
+    // More realistic: savings based on time value of delaying replacement
+    let firstCellSavings = 0;
+    if (remainingLife < 0.5 && additionalLife > 0) {
+        // Cell is at end of life - Shield extends it, delaying replacement
+        // Savings = portion of replacement cost based on how long replacement is delayed
+        const delayYears = Math.min(additionalLife, 1.5);
+        firstCellSavings = replacementCost * (delayYears / adjustedLifespan) * 0.6; // 60% of proportional value
+    } else if (remainingLife < 1 && additionalLife > 0) {
+        // Cell is near end of life
+        const delayYears = Math.min(additionalLife, 1.2);
+        firstCellSavings = replacementCost * (delayYears / adjustedLifespan) * 0.5; // 50% of proportional value
+    } else if (remainingLife < 2 && additionalLife > 0) {
+        // Cell has 1-2 years left
+        const delayYears = Math.min(additionalLife, 1.0);
+        firstCellSavings = replacementCost * (delayYears / adjustedLifespan) * 0.4; // 40% of proportional value
+    } else if (additionalLife > 0) {
+        // Cell has more life - smaller savings
+        const delayYears = Math.min(additionalLife, 0.8);
+        firstCellSavings = replacementCost * (delayYears / adjustedLifespan) * 0.3; // 30% of proportional value
+    }
+    
+    // Calculate savings per future replacement
+    // With Cell Shield, each new cell may last 1-1.5 years longer
+    // Savings = avoiding one replacement cycle over time
+    const futureLifespan = (baseLifespan / hardWaterFactor) + 1.2; // Add ~1.2 years average extension
+    const standardLifespan = baseLifespan / hardWaterFactor;
+    
+    // Savings per replacement = cost of one replacement avoided over the extended lifespan
+    // If standard is 3 years and extended is 4.2 years, you save 1 replacement every ~12 years
+    // More realistic: savings = portion of replacement cost based on frequency reduction
+    const replacementFrequencyReduction = (futureLifespan - standardLifespan) / futureLifespan;
+    const savingsPerReplacement = replacementCost * replacementFrequencyReduction * 0.5; // 50% of frequency reduction value
+    
+    // Calculate total savings over 10 years
+    // Assume cells are replaced every standardLifespan years without shield
+    const yearsToCalculate = 10;
+    const replacementsWithoutShield = Math.ceil(yearsToCalculate / standardLifespan);
+    const replacementsWithShield = Math.ceil(yearsToCalculate / futureLifespan);
+    const replacementsAvoided = Math.max(0, replacementsWithoutShield - replacementsWithShield);
+    const futureSavingsTotal = replacementsAvoided * replacementCost * 0.7; // 70% of avoided replacement cost
+    
+    const totalSavings = firstCellSavings + futureSavingsTotal;
+    const shieldCost = 199;
+    const netSavings = totalSavings - shieldCost;
+    
+    return {
+        extendedLife: additionalLife.toFixed(1),
+        totalLife: extendedLife.toFixed(1),
+        firstCellSavings: firstCellSavings.toFixed(0),
+        futureCellSavings: savingsPerReplacement.toFixed(0),
+        futureSavingsTotal: futureSavingsTotal.toFixed(0),
+        totalSavings: totalSavings.toFixed(0),
+        netSavings: netSavings.toFixed(0),
+        replacementCost: replacementCost,
+        replacementsIn10Years: replacementsWithShield
+    };
+}
+
+// Initialize calculator form
+document.addEventListener('DOMContentLoaded', function() {
+    const calculatorForm = document.getElementById('savingsCalculatorForm');
+    const resultsDiv = document.getElementById('calculatorResults');
+    const savingsCalculator = document.querySelector('.savings-calculator');
+    
+    // Prevent calculator clicks from opening product modal
+    if (savingsCalculator) {
+        savingsCalculator.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Also prevent propagation on all interactive elements inside
+        const calculatorElements = savingsCalculator.querySelectorAll('input, select, button, label');
+        calculatorElements.forEach(element => {
+            element.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            element.addEventListener('focus', function(e) {
+                e.stopPropagation();
+            });
+        });
+    }
+    
+    if (calculatorForm) {
+        calculatorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const brand = document.getElementById('cellBrand').value;
+            const zipCode = document.getElementById('zipCode').value;
+            const cellAge = parseFloat(document.getElementById('cellAge').value);
+            
+            if (!brand || !zipCode || isNaN(cellAge)) {
+                alert('Please fill in all fields correctly.');
+                return;
+            }
+            
+            const results = calculateSavings(brand, zipCode, cellAge);
+            
+            if (results) {
+                document.getElementById('firstCellSavings').textContent = `$${results.firstCellSavings}`;
+                document.getElementById('futureCellSavings').textContent = `$${results.futureCellSavings} per replacement`;
+                document.getElementById('totalSavings').textContent = `$${results.totalSavings}`;
+                
+                // Update description with context
+                const totalDesc = document.getElementById('totalSavingsDescription');
+                if (results.replacementsIn10Years > 0) {
+                    totalDesc.textContent = `Combined savings from your current cell and ${results.replacementsIn10Years} future replacement${results.replacementsIn10Years > 1 ? 's' : ''} over the next 10 years.`;
+                } else {
+                    totalDesc.textContent = `Combined savings from your current cell over the next 10 years.`;
+                }
+                
+                resultsDiv.style.display = 'block';
+                resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    }
+});
+
 // Export functions for testing (if needed)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         calculateShippingCost,
         updatePricing,
         validateZipCode,
-        InstagramFeed
+        InstagramFeed,
+        calculateSavings,
+        getHardWaterLevel
     };
 }
