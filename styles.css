@@ -5160,6 +5160,7 @@ body {
         font-weight: 600;
         position: relative;
         transition: all 0.3s ease;
+        color: #1e3a8a; /* Dark blue text for visibility on white background */
     }
 
     .nav-link:hover {
@@ -6702,6 +6703,7 @@ input:focus {
     
     .nav-link {
         position: relative;
+        color: #1e3a8a; /* Dark blue text for visibility on white background */
     }
     
     /* Mobile touch feedback */
