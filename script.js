@@ -1832,7 +1832,9 @@ class InstagramFeed {
         const postsContainer = document.getElementById('instagramPosts');
         if (!postsContainer) return;
 
-        postsContainer.innerHTML = posts.map(post => this.createPostHTML(post)).join('');
+        // Only show the first post
+        const singlePost = posts.slice(0, 1);
+        postsContainer.innerHTML = singlePost.map(post => this.createPostHTML(post)).join('');
         
         // Add animation to posts
         setTimeout(() => {
